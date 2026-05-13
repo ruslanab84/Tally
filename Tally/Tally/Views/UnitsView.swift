@@ -2,6 +2,7 @@ import SwiftUI
 
 struct UnitsView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var selectedCategory = UnitCategory.all[0]
     @State private var fromUnit: UnitItem
     @State private var toUnit: UnitItem
@@ -23,14 +24,14 @@ struct UnitsView: View {
                 // Conversion card
                 VStack(alignment: .leading, spacing: 0) {
                     Text(selectedCategory.label.uppercased())
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("JetBrainsMono-SemiBold", size: 11))
                         .tracking(0.6)
                         .foregroundStyle(T.textMuted)
 
                     // FROM
                     HStack {
                         Text(fromUnit.name)
-                            .font(.system(size: 14))
+                            .font(.custom("JetBrainsMono-Regular", size: 14))
                             .foregroundStyle(T.textMuted)
                         Spacer()
                         TextField("0", text: $inputText)
@@ -54,7 +55,7 @@ struct UnitsView: View {
                             }
                         } label: {
                             Image(systemName: "arrow.up.arrow.down")
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.custom("JetBrainsMono-SemiBold", size: 12))
                                 .foregroundStyle(.white)
                                 .frame(width: 28, height: 28)
                                 .background(T.accent)
@@ -68,7 +69,7 @@ struct UnitsView: View {
                     // TO
                     HStack {
                         Text(toUnit.name)
-                            .font(.system(size: 14))
+                            .font(.custom("JetBrainsMono-Regular", size: 14))
                             .foregroundStyle(T.textMuted)
                         Spacer()
                         Text(formatResult(result))
@@ -79,8 +80,8 @@ struct UnitsView: View {
                     }
 
                     // FROM chips
-                    Text("FROM")
-                        .font(.system(size: 10, weight: .semibold))
+                    Text(L.from)
+                        .font(.custom("JetBrainsMono-SemiBold", size: 10))
                         .tracking(0.4)
                         .foregroundStyle(T.textMuted)
                         .padding(.top, 16)
@@ -91,8 +92,8 @@ struct UnitsView: View {
                     }
 
                     // TO chips
-                    Text("TO")
-                        .font(.system(size: 10, weight: .semibold))
+                    Text(L.to)
+                        .font(.custom("JetBrainsMono-SemiBold", size: 10))
                         .tracking(0.4)
                         .foregroundStyle(T.textMuted)
                         .padding(.top, 10)
@@ -107,8 +108,8 @@ struct UnitsView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
 
                 // Quick results
-                Text("ALL CONVERSIONS")
-                    .font(.system(size: 11, weight: .semibold))
+                Text(L.allConversions)
+                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -123,7 +124,7 @@ struct UnitsView: View {
                             HStack(spacing: 12) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(unit.name)
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .font(.custom("JetBrainsMono-SemiBold", size: 14))
                                         .foregroundStyle(T.text)
                                     Text(unit.symbol)
                                         .font(.custom("JetBrainsMono-Medium", size: 11))
@@ -151,8 +152,8 @@ struct UnitsView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.large))
 
                 // Categories grid
-                Text("CATEGORIES")
-                    .font(.system(size: 11, weight: .semibold))
+                Text(L.categories)
+                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -165,17 +166,17 @@ struct UnitsView: View {
                         } label: {
                             HStack(spacing: 10) {
                                 Text(category.icon)
-                                    .font(.system(size: 16))
+                                    .font(.custom("JetBrainsMono-Regular", size: 16))
                                     .frame(width: 32, height: 32)
                                     .background(selectedCategory.id == category.id ? T.accentSoft : T.surfaceAlt)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(category.label)
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .font(.custom("JetBrainsMono-SemiBold", size: 14))
                                         .foregroundStyle(selectedCategory.id == category.id ? T.accent : T.text)
                                     Text("\(category.units.count) units")
-                                        .font(.system(size: 11))
+                                        .font(.custom("JetBrainsMono-Regular", size: 11))
                                         .foregroundStyle(T.textMuted)
                                 }
                                 Spacer()
@@ -196,13 +197,17 @@ struct UnitsView: View {
             .padding(.bottom, 20)
         }
         .scrollDismissesKeyboard(.interactively)
-        .background(T.bg)
-        .navigationTitle("Units")
+        .background { TallyBackground(T: T, icons: [
+            "ruler", "scalemass", "gauge.open.with.lines.needle.33percent",
+            "drop", "bolt", "timer", "arrow.left.arrow.right",
+            "square.resize",
+        ]) }
+        .navigationTitle(L.navUnits)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("Done") { inputFocused = false }
+                Button(L.done) { inputFocused = false }
             }
         }
     }

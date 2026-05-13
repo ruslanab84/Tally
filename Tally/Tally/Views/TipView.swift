@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TipView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var billText = ""
     @State private var tipPercent = 18
     @State private var people = 2
@@ -19,8 +20,8 @@ struct TipView: View {
             VStack(spacing: 14) {
                 // Bill amount
                 VStack(spacing: 6) {
-                    Text("BILL AMOUNT")
-                        .font(.system(size: 11, weight: .semibold))
+                    Text(L.billAmount)
+                        .font(.custom("JetBrainsMono-SemiBold", size: 11))
                         .tracking(0.6)
                         .foregroundStyle(T.textMuted)
 
@@ -50,7 +51,7 @@ struct TipView: View {
                 // Tip percentage
                 VStack(spacing: 12) {
                     HStack {
-                        Text("Tip").font(.system(size: 13)).foregroundStyle(T.textMuted)
+                        Text(L.tip).font(.custom("JetBrainsMono-Regular", size: 13)).foregroundStyle(T.textMuted)
                         Spacer()
                         Text("\(tipPercent)%")
                             .font(.custom("JetBrainsMono-SemiBold", size: 22))
@@ -65,7 +66,7 @@ struct TipView: View {
                                 }
                             } label: {
                                 Text("\(pct)%")
-                                    .font(.system(size: 13, weight: .semibold))
+                                    .font(.custom("JetBrainsMono-SemiBold", size: 13))
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 8)
                                     .background(pct == tipPercent ? T.accent : .clear)
@@ -97,11 +98,11 @@ struct TipView: View {
                 // Split
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Split between")
-                            .font(.system(size: 13))
+                        Text(L.splitBetween)
+                            .font(.custom("JetBrainsMono-Regular", size: 13))
                             .foregroundStyle(T.textMuted)
-                        Text("\(people) people")
-                            .font(.system(size: 16, weight: .semibold))
+                        Text("\(people) \(L.people)")
+                            .font(.custom("JetBrainsMono-SemiBold", size: 16))
                             .foregroundStyle(T.text)
                     }
                     Spacer()
@@ -110,7 +111,7 @@ struct TipView: View {
                             if people > 1 { people -= 1 }
                         } label: {
                             Text("−")
-                                .font(.system(size: 18))
+                                .font(.custom("JetBrainsMono-Regular", size: 18))
                                 .frame(width: 32, height: 32)
                                 .background(T.surfaceAlt)
                                 .foregroundStyle(T.text)
@@ -127,7 +128,7 @@ struct TipView: View {
                             if people < 50 { people += 1 }
                         } label: {
                             Text("+")
-                                .font(.system(size: 18))
+                                .font(.custom("JetBrainsMono-Regular", size: 18))
                                 .frame(width: 32, height: 32)
                                 .background(T.accent)
                                 .foregroundStyle(.white)
@@ -143,7 +144,7 @@ struct TipView: View {
                 // Result card
                 VStack(spacing: 0) {
                     HStack {
-                        Text("Tip").font(.system(size: 13))
+                        Text(L.tip).font(.custom("JetBrainsMono-Regular", size: 13))
                         Spacer()
                         Text(String(format: "$%.2f", tip))
                             .font(.custom("JetBrainsMono-Medium", size: 13))
@@ -152,7 +153,7 @@ struct TipView: View {
                     .padding(.bottom, 6)
 
                     HStack {
-                        Text("Total").font(.system(size: 13))
+                        Text(L.total).font(.custom("JetBrainsMono-Regular", size: 13))
                         Spacer()
                         Text(String(format: "$%.2f", total))
                             .font(.custom("JetBrainsMono-Medium", size: 13))
@@ -165,8 +166,8 @@ struct TipView: View {
                         .frame(height: 1)
 
                     HStack(alignment: .bottom) {
-                        Text("Each pays")
-                            .font(.system(size: 13))
+                        Text(L.eachPays)
+                            .font(.custom("JetBrainsMono-Regular", size: 13))
                             .opacity(0.85)
                         Spacer()
                         Text(String(format: "$%.2f", perPerson))
@@ -183,13 +184,17 @@ struct TipView: View {
             .padding(.bottom, 20)
         }
         .scrollDismissesKeyboard(.interactively)
-        .background(T.bg)
-        .navigationTitle("Tip & Split")
+        .background { TallyBackground(T: T, icons: [
+            "fork.knife", "percent", "person.2",
+            "dollarsign", "cart", "cup.and.saucer",
+            "gift", "star",
+        ]) }
+        .navigationTitle(L.navTip)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("Done") { billFocused = false }
+                Button(L.done) { billFocused = false }
             }
         }
     }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DateTimeView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var fromDate = Date()
     @State private var toDate: Date
 
@@ -29,8 +30,8 @@ struct DateTimeView: View {
             VStack(spacing: 14) {
                 differenceCard
 
-                Text("WORLD CLOCK")
-                    .font(.system(size: 11, weight: .semibold))
+                Text(L.worldClock)
+                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -47,8 +48,12 @@ struct DateTimeView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
         }
-        .background(T.bg)
-        .navigationTitle("Date & Time")
+        .background { TallyBackground(T: T, icons: [
+            "clock", "calendar", "globe.americas",
+            "hourglass", "sunrise", "moon.stars",
+            "alarm", "stopwatch",
+        ]) }
+        .navigationTitle(L.navDateTime)
         .navigationBarTitleDisplayMode(.large)
     }
 
@@ -66,16 +71,16 @@ struct DateTimeView: View {
         let rem = totalDays % 7
 
         return VStack(spacing: 10) {
-            Text("DIFFERENCE")
-                .font(.system(size: 11, weight: .semibold))
+            Text(L.difference)
+                .font(.custom("JetBrainsMono-SemiBold", size: 11))
                 .tracking(0.6)
                 .foregroundStyle(T.textMuted)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 10) {
                 VStack(spacing: 6) {
-                    Text("From")
-                        .font(.system(size: 11))
+                    Text(L.from)
+                        .font(.custom("JetBrainsMono-Regular", size: 11))
                         .foregroundStyle(T.textMuted)
                     DatePicker("", selection: $fromDate, displayedComponents: .date)
                         .labelsHidden()
@@ -88,12 +93,12 @@ struct DateTimeView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 Image(systemName: "arrow.right")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.custom("JetBrainsMono-SemiBold", size: 14))
                     .foregroundStyle(T.accent)
 
                 VStack(spacing: 6) {
-                    Text("To")
-                        .font(.system(size: 11))
+                    Text(L.to)
+                        .font(.custom("JetBrainsMono-Regular", size: 11))
                         .foregroundStyle(T.textMuted)
                     DatePicker("", selection: $toDate, displayedComponents: .date)
                         .labelsHidden()
@@ -107,14 +112,14 @@ struct DateTimeView: View {
             }
 
             VStack(spacing: 2) {
-                Text("\(totalDays) days")
+                Text("\(totalDays) \(L.days)")
                     .font(.custom("JetBrainsMono-Medium", size: 36))
                     .fontWeight(.medium)
                     .tracking(-1)
                     .foregroundStyle(T.accent)
 
-                Text("\(months) months \(days) days · \(weeks) weeks \(rem) day\(rem == 1 ? "" : "s")")
-                    .font(.system(size: 12))
+                Text("\(months) \(L.months) \(days) \(L.days) · \(weeks) \(L.weeks) \(rem) \(L.days)")
+                    .font(.custom("JetBrainsMono-Regular", size: 12))
                     .foregroundStyle(T.textMuted)
             }
             .padding(.top, 4)
@@ -147,7 +152,7 @@ struct DateTimeView: View {
         return HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(city)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.custom("JetBrainsMono-SemiBold", size: 15))
                     .foregroundStyle(T.text)
                 Text(offset)
                     .font(.custom("JetBrainsMono-Medium", size: 11))
@@ -159,7 +164,7 @@ struct DateTimeView: View {
                     .font(.custom("JetBrainsMono-Medium", size: 22))
                     .foregroundStyle(T.text)
                 Text(label)
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono-Regular", size: 11))
                     .foregroundStyle(T.textMuted)
             }
         }
@@ -176,9 +181,9 @@ struct DateTimeView: View {
         let localDay = localCal.ordinality(of: .day, in: .era, for: now) ?? 0
         let tzDay = tzCal.ordinality(of: .day, in: .era, for: now) ?? 0
         switch tzDay - localDay {
-        case 1:  return "Tomorrow"
-        case -1: return "Yesterday"
-        default: return "Today"
+        case 1:  return L.tomorrow
+        case -1: return L.yesterday
+        default: return L.today
         }
     }
 }

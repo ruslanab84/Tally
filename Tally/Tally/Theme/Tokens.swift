@@ -3,6 +3,62 @@ import SwiftUI
 // MARK: - Tally Design Tokens
 // Warm neutral surfaces + orange accent. Friendly iOS feel.
 
+enum AccentTheme: String, CaseIterable {
+    case orange, blue, green, purple, pink
+
+    var lightColor: Color {
+        switch self {
+        case .orange: Color(hex: "FF8A00")
+        case .blue:   Color(hex: "3A6FF7")
+        case .green:  Color(hex: "1FAE74")
+        case .purple: Color(hex: "9A4BF0")
+        case .pink:   Color(hex: "EC4899")
+        }
+    }
+
+    var darkColor: Color {
+        switch self {
+        case .orange: Color(hex: "FF8A00")
+        case .blue:   Color(hex: "5A8AFF")
+        case .green:  Color(hex: "34D399")
+        case .purple: Color(hex: "B57BFF")
+        case .pink:   Color(hex: "F472B6")
+        }
+    }
+
+    var lightSoft: Color {
+        switch self {
+        case .orange: Color(hex: "FFE9D6")
+        case .blue:   Color(hex: "D6E4FF")
+        case .green:  Color(hex: "D1FAE5")
+        case .purple: Color(hex: "EDD6FF")
+        case .pink:   Color(hex: "FCE7F3")
+        }
+    }
+
+    var darkSoft: Color {
+        switch self {
+        case .orange: Color(hex: "3A2410")
+        case .blue:   Color(hex: "102040")
+        case .green:  Color(hex: "0F2A1E")
+        case .purple: Color(hex: "261040")
+        case .pink:   Color(hex: "401028")
+        }
+    }
+
+    var lightKeyOp: Color {
+        switch self {
+        case .orange: Color(hex: "FFE0BD")
+        case .blue:   Color(hex: "C5D5FA")
+        case .green:  Color(hex: "BBF7D0")
+        case .purple: Color(hex: "DEC5FA")
+        case .pink:   Color(hex: "FBCFE8")
+        }
+    }
+
+    var darkKeyOp: Color { darkSoft }
+}
+
 struct TallyTokens {
     let bg: Color
     let surface: Color
@@ -11,8 +67,8 @@ struct TallyTokens {
     let text: Color
     let textMuted: Color
     let textTertiary: Color
-    let accent: Color
-    let accentSoft: Color
+    var accent: Color
+    var accentSoft: Color
     let success: Color
     let blue: Color
     let purple: Color
@@ -21,7 +77,7 @@ struct TallyTokens {
     let red: Color
     let yellow: Color
     let keyNum: Color
-    let keyOp: Color
+    var keyOp: Color
     let keyFn: Color
     let tabBg: Color
 
@@ -70,6 +126,14 @@ struct TallyTokens {
         keyFn: Color(hex: "1F1D1B"),
         tabBg: Color(hex: "0F0E0C").opacity(0.85)
     )
+
+    func withAccent(_ theme: AccentTheme, isDark: Bool) -> TallyTokens {
+        var tokens = self
+        tokens.accent = isDark ? theme.darkColor : theme.lightColor
+        tokens.accentSoft = isDark ? theme.darkSoft : theme.lightSoft
+        tokens.keyOp = isDark ? theme.darkKeyOp : theme.lightKeyOp
+        return tokens
+    }
 }
 
 // MARK: - Fonts
@@ -123,6 +187,70 @@ extension Color {
             blue: Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+// MARK: - Background Pattern
+
+struct TallyBackground: View {
+    let T: TallyTokens
+    let icons: [String]
+
+    private struct Item: Identifiable {
+        let id: Int
+        let icon: String
+        let x: CGFloat
+        let y: CGFloat
+        let size: CGFloat
+        let rotation: Double
+        let opacity: Double
+    }
+
+    private func items(in size: CGSize) -> [Item] {
+        var result: [Item] = []
+        let cols = 4
+        let rows = Int(size.height / 100) + 1
+        let cellW = size.width / CGFloat(cols)
+        let cellH: CGFloat = 100
+
+        for row in 0..<rows {
+            for col in 0..<cols {
+                let idx = row * cols + col
+                let seed = idx * 7 + 13
+                let jX = CGFloat((seed * 31) % 40) - 20
+                let jY = CGFloat((seed * 17) % 30) - 15
+                result.append(Item(
+                    id: idx,
+                    icon: icons[idx % icons.count],
+                    x: CGFloat(col) * cellW + cellW / 2 + jX,
+                    y: CGFloat(row) * cellH + cellH / 2 + jY,
+                    size: CGFloat(18 + (seed * 11) % 14),
+                    rotation: Double((seed * 23) % 40) - 20,
+                    opacity: 0.03 + Double((seed * 7) % 3) * 0.01
+                ))
+            }
+        }
+        return result
+    }
+
+    var body: some View {
+        ZStack {
+            T.bg
+            GeometryReader { geo in
+                let list = items(in: geo.size)
+                ZStack {
+                    ForEach(list) { item in
+                        Image(systemName: item.icon)
+                            .font(.system(size: item.size, weight: .light))
+                            .foregroundStyle(T.text)
+                            .opacity(item.opacity)
+                            .rotationEffect(.degrees(item.rotation))
+                            .position(x: item.x, y: item.y)
+                    }
+                }
+            }
+        }
+        .ignoresSafeArea()
     }
 }
 

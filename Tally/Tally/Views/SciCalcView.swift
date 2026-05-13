@@ -82,6 +82,7 @@ enum GraphFunc: String, CaseIterable, Identifiable {
 
 struct SciCalcView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var mode: SciMode = .sci
 
     enum SciMode: String, CaseIterable {
@@ -116,7 +117,7 @@ struct SciCalcView: View {
             VStack(spacing: 14) {
                 Picker("Mode", selection: $mode) {
                     ForEach(SciMode.allCases, id: \.self) { m in
-                        Text(m.rawValue).tag(m)
+                        Text(m == .sci ? L.sciModeSci : m == .prog ? L.sciModeProg : L.sciModeGraph).tag(m)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -130,8 +131,11 @@ struct SciCalcView: View {
             .padding(.horizontal, 14)
             .padding(.bottom, 20)
         }
-        .background(T.bg)
-        .navigationTitle("Scientific")
+        .background { TallyBackground(T: T, icons: [
+            "function", "sum", "x.squareroot", "angle",
+            "infinity", "pi", "chart.xyaxis.line", "number",
+        ]) }
+        .navigationTitle(L.navScientific)
         .navigationBarTitleDisplayMode(.large)
         .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
     }
@@ -144,7 +148,7 @@ struct SciCalcView: View {
                 HStack {
                     if sciMemory != 0 {
                         Text("M: \(sciFormat(sciMemory))")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.custom("JetBrainsMono-SemiBold", size: 11))
                             .tracking(0.4)
                             .foregroundStyle(T.accent)
                     }
@@ -573,7 +577,7 @@ struct SciCalcView: View {
         VStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
                 Text("F(X)")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
 
@@ -627,14 +631,14 @@ struct SciCalcView: View {
 
             VStack(spacing: 8) {
                 HStack {
-                    Text("Range").font(.system(size: 13)).foregroundStyle(T.textMuted)
+                    Text(L.graphRange).font(.custom("JetBrainsMono-Regular", size: 13)).foregroundStyle(T.textMuted)
                     Spacer()
                     Text(graphFunc.rangeStr)
                         .font(.custom("JetBrainsMono-Medium", size: 13))
                         .foregroundStyle(T.text)
                 }
                 HStack {
-                    Text("Step").font(.system(size: 13)).foregroundStyle(T.textMuted)
+                    Text(L.graphStep).font(.custom("JetBrainsMono-Regular", size: 13)).foregroundStyle(T.textMuted)
                     Spacer()
                     Text("0.05")
                         .font(.custom("JetBrainsMono-Medium", size: 13))
@@ -659,7 +663,7 @@ private struct SciKeyButton: View {
     var body: some View {
         Button(action: action) {
             Text(label)
-                .font(.system(size: 16, weight: .medium))
+                .font(.custom("JetBrainsMono-Medium", size: 16))
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .background(kind == .eq ? T.accent : kind == .op ? T.keyOp : kind == .fn ? T.keyFn : T.keyNum)

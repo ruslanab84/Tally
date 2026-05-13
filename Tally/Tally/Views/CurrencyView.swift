@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CurrencyView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var amountText = "100"
     @State private var fromCurrency = Currency.all[0]
     @State private var toCurrency = Currency.all[1]
@@ -25,18 +26,18 @@ struct CurrencyView: View {
                     HStack(alignment: .bottom) {
                         Button { showFromPicker = true } label: {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("FROM")
-                                    .font(.system(size: 11, weight: .semibold))
+                                Text(L.from)
+                                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                                     .tracking(0.6)
                                     .foregroundStyle(T.textMuted)
 
                                 HStack(spacing: 8) {
-                                    Text(fromCurrency.flag).font(.system(size: 22))
+                                    Text(fromCurrency.flag).font(.custom("JetBrainsMono-Regular", size: 22))
                                     Text(fromCurrency.code)
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .font(.custom("JetBrainsMono-SemiBold", size: 18))
                                         .foregroundStyle(T.text)
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 10))
+                                        .font(.custom("JetBrainsMono-Regular", size: 10))
                                         .foregroundStyle(T.textMuted)
                                 }
                             }
@@ -67,7 +68,7 @@ struct CurrencyView: View {
                             }
                         } label: {
                             Image(systemName: "arrow.up.arrow.down")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.custom("JetBrainsMono-SemiBold", size: 14))
                                 .foregroundStyle(.white)
                                 .frame(width: 32, height: 32)
                                 .background(T.accent)
@@ -83,18 +84,18 @@ struct CurrencyView: View {
                     HStack(alignment: .bottom) {
                         Button { showToPicker = true } label: {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("TO")
-                                    .font(.system(size: 11, weight: .semibold))
+                                Text(L.to)
+                                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                                     .tracking(0.6)
                                     .foregroundStyle(T.textMuted)
 
                                 HStack(spacing: 8) {
-                                    Text(toCurrency.flag).font(.system(size: 22))
+                                    Text(toCurrency.flag).font(.custom("JetBrainsMono-Regular", size: 22))
                                     Text(toCurrency.code)
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .font(.custom("JetBrainsMono-SemiBold", size: 18))
                                         .foregroundStyle(T.text)
                                     Image(systemName: "chevron.down")
-                                        .font(.system(size: 10))
+                                        .font(.custom("JetBrainsMono-Regular", size: 10))
                                         .foregroundStyle(T.textMuted)
                                 }
                             }
@@ -118,6 +119,17 @@ struct CurrencyView: View {
                             .font(.custom("JetBrainsMono-Medium", size: 11))
                             .foregroundStyle(T.textMuted)
 
+                        let rateChange = service.changeFor(toCurrency.code)
+                        if rateChange != 0 {
+                            HStack(spacing: 2) {
+                                Image(systemName: rateChange >= 0 ? "arrow.up.right" : "arrow.down.right")
+                                    .font(.custom("JetBrainsMono-Medium", size: 8))
+                                Text(String(format: "%.2f%%", abs(rateChange)))
+                                    .font(.custom("JetBrainsMono-Medium", size: 10))
+                            }
+                            .foregroundStyle(rateChange >= 0 ? T.success : T.red)
+                        }
+
                         Spacer()
 
                         if service.isLoading {
@@ -126,12 +138,12 @@ struct CurrencyView: View {
                                 .frame(width: 12, height: 12)
                         } else {
                             Image(systemName: service.isOffline ? "wifi.slash" : "wifi")
-                                .font(.system(size: 9))
+                                .font(.custom("JetBrainsMono-Regular", size: 9))
                                 .foregroundStyle(service.isOffline ? T.red : T.success)
                         }
 
                         Text(service.lastUpdatedText)
-                            .font(.system(size: 10))
+                            .font(.custom("JetBrainsMono-Regular", size: 10))
                             .foregroundStyle(T.textMuted)
                     }
                     .padding(.top, 12)
@@ -141,8 +153,8 @@ struct CurrencyView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
 
                 // Popular currencies
-                Text("POPULAR")
-                    .font(.system(size: 11, weight: .semibold))
+                Text(L.popular)
+                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -150,30 +162,44 @@ struct CurrencyView: View {
 
                 VStack(spacing: 6) {
                     ForEach(Currency.popular) { currency in
+                        let change = service.changeFor(currency.code)
+                        let isUp = change >= 0
                         Button {
                             toCurrency = currency
                         } label: {
                             HStack(spacing: 12) {
                                 Text(currency.flag)
-                                    .font(.system(size: 20))
+                                    .font(.custom("JetBrainsMono-Regular", size: 20))
                                     .frame(width: 36, height: 36)
                                     .background(T.surfaceAlt)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(currency.code)
-                                        .font(.system(size: 15, weight: .semibold))
+                                        .font(.custom("JetBrainsMono-SemiBold", size: 15))
                                         .foregroundStyle(T.text)
                                     Text(currency.name)
-                                        .font(.system(size: 12))
+                                        .font(.custom("JetBrainsMono-Regular", size: 12))
                                         .foregroundStyle(T.textMuted)
                                 }
 
                                 Spacer()
 
-                                Text(String(format: "%.2f", amount / fromRate * service.rateFor(currency.code)))
-                                    .font(.custom("JetBrainsMono-Medium", size: 18))
-                                    .foregroundStyle(currency == toCurrency ? T.accent : T.text)
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    Text(String(format: "%.2f", amount / fromRate * service.rateFor(currency.code)))
+                                        .font(.custom("JetBrainsMono-Medium", size: 18))
+                                        .foregroundStyle(currency == toCurrency ? T.accent : T.text)
+
+                                    if change != 0 {
+                                        HStack(spacing: 3) {
+                                            Image(systemName: isUp ? "arrow.up.right" : "arrow.down.right")
+                                                .font(.custom("JetBrainsMono-Medium", size: 10))
+                                            Text(String(format: "%.2f%%", abs(change)))
+                                                .font(.custom("JetBrainsMono-Medium", size: 11))
+                                        }
+                                        .foregroundStyle(isUp ? T.success : T.red)
+                                    }
+                                }
                             }
                             .padding(.horizontal, 14)
                             .padding(.vertical, 12)
@@ -187,11 +213,11 @@ struct CurrencyView: View {
                 // All currencies button
                 Button { showToPicker = true } label: {
                     HStack {
-                        Text("All 32 currencies")
-                            .font(.system(size: 14, weight: .medium))
+                        Text(L.allCurrencies)
+                            .font(.custom("JetBrainsMono-Medium", size: 14))
                             .foregroundStyle(T.accent)
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 12))
+                            .font(.custom("JetBrainsMono-Regular", size: 12))
                             .foregroundStyle(T.accent)
                     }
                     .frame(maxWidth: .infinity)
@@ -205,13 +231,17 @@ struct CurrencyView: View {
             .padding(.bottom, 20)
         }
         .scrollDismissesKeyboard(.interactively)
-        .background(T.bg)
-        .navigationTitle("Currency")
+        .background { TallyBackground(T: T, icons: [
+            "dollarsign.circle", "yensign", "sterlingsign",
+            "eurosign", "banknote", "arrow.left.arrow.right",
+            "globe", "chart.line.uptrend.xyaxis",
+        ]) }
+        .navigationTitle(L.navCurrency)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("Done") { amountFocused = false }
+                Button(L.done) { amountFocused = false }
             }
         }
         .task { await service.fetchRates() }
@@ -230,6 +260,7 @@ struct CurrencyView: View {
 
 private struct CurrencyPickerSheet: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @Environment(\.dismiss) private var dismiss
     @Binding var selected: Currency
     let amount: Double
@@ -250,37 +281,50 @@ private struct CurrencyPickerSheet: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(Array(filtered.enumerated()), id: \.element.id) { index, currency in
+                        let change = service.changeFor(currency.code)
                         Button {
                             selected = currency
                             dismiss()
                         } label: {
                             HStack(spacing: 12) {
                                 Text(currency.flag)
-                                    .font(.system(size: 22))
+                                    .font(.custom("JetBrainsMono-Regular", size: 22))
                                     .frame(width: 36, height: 36)
                                     .background(T.surfaceAlt)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(currency.code)
-                                        .font(.system(size: 15, weight: .semibold))
+                                        .font(.custom("JetBrainsMono-SemiBold", size: 15))
                                         .foregroundStyle(T.text)
                                     Text(currency.name)
-                                        .font(.system(size: 12))
+                                        .font(.custom("JetBrainsMono-Regular", size: 12))
                                         .foregroundStyle(T.textMuted)
                                 }
 
                                 Spacer()
 
-                                if amount > 0 {
-                                    Text(String(format: "%.2f", amount / fromRate * service.rateFor(currency.code)))
-                                        .font(.custom("JetBrainsMono-Medium", size: 15))
-                                        .foregroundStyle(currency == selected ? T.accent : T.textMuted)
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    if amount > 0 {
+                                        Text(String(format: "%.2f", amount / fromRate * service.rateFor(currency.code)))
+                                            .font(.custom("JetBrainsMono-Medium", size: 15))
+                                            .foregroundStyle(currency == selected ? T.accent : T.textMuted)
+                                    }
+
+                                    if change != 0 {
+                                        HStack(spacing: 2) {
+                                            Image(systemName: change >= 0 ? "arrow.up.right" : "arrow.down.right")
+                                                .font(.custom("JetBrainsMono-Medium", size: 8))
+                                            Text(String(format: "%.2f%%", abs(change)))
+                                                .font(.custom("JetBrainsMono-Medium", size: 10))
+                                        }
+                                        .foregroundStyle(change >= 0 ? T.success : T.red)
+                                    }
                                 }
 
                                 if currency == selected {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .font(.system(size: 18))
+                                        .font(.custom("JetBrainsMono-Regular", size: 18))
                                         .foregroundStyle(T.accent)
                                 }
                             }
@@ -299,13 +343,16 @@ private struct CurrencyPickerSheet: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
             }
-            .background(T.bg)
-            .searchable(text: $search, prompt: "Search currencies")
-            .navigationTitle("Select Currency")
+            .background { TallyBackground(T: T, icons: [
+                "dollarsign.circle", "yensign", "sterlingsign",
+                "eurosign", "banknote", "globe",
+            ]) }
+            .searchable(text: $search, prompt: L.searchCurrencies)
+            .navigationTitle(L.selectCurrency)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L.cancel) { dismiss() }
                 }
             }
         }

@@ -3,18 +3,53 @@ import SwiftUI
 @main
 struct TallyApp: App {
     @AppStorage("isDarkMode") private var isDarkMode = false
+    @AppStorage("appLanguage") private var appLanguage = "en"
+    @AppStorage("accentColor") private var accentColor = "orange"
+
+    private var lang: AppLanguage {
+        AppLanguage(rawValue: appLanguage) ?? .en
+    }
+
+    private var accentTheme: AccentTheme {
+        AccentTheme(rawValue: accentColor) ?? .orange
+    }
+
+    private var tokens: TallyTokens {
+        let base: TallyTokens = isDarkMode ? .dark : .light
+        return base.withAccent(accentTheme, isDark: isDarkMode)
+    }
+
+    @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
-            ContentView(isDarkMode: $isDarkMode)
-                .environment(\.tokens, isDarkMode ? .dark : .light)
-                .preferredColorScheme(isDarkMode ? .dark : .light)
+            ZStack {
+                ContentView(isDarkMode: $isDarkMode, appLanguage: $appLanguage, accentColor: $accentColor)
+                    .environment(\.tokens, tokens)
+                    .environment(\.loc, Loc.forLanguage(lang))
+                    .preferredColorScheme(isDarkMode ? .dark : .light)
+
+                if showSplash {
+                    SplashView(T: tokens)
+                        .ignoresSafeArea()
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                showSplash = false
+                            }
+                        }
+                }
+            }
+            .preferredColorScheme(isDarkMode ? .dark : .light)
         }
     }
 }
 
 struct ContentView: View {
+    @Environment(\.loc) private var L
+    @Environment(\.tokens) private var T
     @Binding var isDarkMode: Bool
+    @Binding var appLanguage: String
+    @Binding var accentColor: String
     @State private var selectedTab: Tab = .home
     @State private var navigationPath = NavigationPath()
 
@@ -32,7 +67,7 @@ struct ContentView: View {
             }
             .tabItem {
                 Image(systemName: "house.fill")
-                Text("Home")
+                Text(L.tabHome)
             }
             .tag(Tab.home)
 
@@ -41,20 +76,20 @@ struct ContentView: View {
             }
             .tabItem {
                 Image(systemName: "clock.fill")
-                Text("History")
+                Text(L.tabHistory)
             }
             .tag(Tab.history)
 
             NavigationStack {
-                SettingsView(isDarkMode: $isDarkMode)
+                SettingsView(isDarkMode: $isDarkMode, appLanguage: $appLanguage, accentColor: $accentColor)
             }
             .tabItem {
                 Image(systemName: "gearshape.fill")
-                Text("Settings")
+                Text(L.tabSettings)
             }
             .tag(Tab.settings)
         }
-        .tint(isDarkMode ? TallyTokens.dark.accent : TallyTokens.light.accent)
+        .tint(T.accent)
     }
 
     @ViewBuilder
@@ -68,10 +103,14 @@ struct ContentView: View {
         case .date:       DateTimeView()
         case .sizes:      SizesView()
         case .tip:        TipView()
+        case .finance:    FinanceView()
+        case .bmi:        BMIView()
+        case .engineering: EngineeringView()
+        case .crypto:      CryptoView()
         }
     }
 }
 
 enum Screen: String, Hashable {
-    case simple, scientific, currency, units, temp, date, sizes, tip
+    case simple, scientific, currency, units, temp, date, sizes, tip, finance, bmi, engineering, crypto
 }

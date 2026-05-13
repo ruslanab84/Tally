@@ -3,25 +3,30 @@ import SwiftUI
 struct HubTileData: Identifiable {
     let id: String
     let screen: Screen
-    let label: String
-    let sub: String
+    let labelKey: KeyPath<Loc, String>
+    let subKey: KeyPath<Loc, String>
     let icon: String       // SF Symbol name
     let accentKey: KeyPath<TallyTokens, Color>
 
     static let all: [HubTileData] = [
-        HubTileData(id: "simple", screen: .simple, label: "Simple", sub: "Basic calc", icon: "plus.forwardslash.minus", accentKey: \.accent),
-        HubTileData(id: "scientific", screen: .scientific, label: "Scientific", sub: "Advanced", icon: "function", accentKey: \.blue),
-        HubTileData(id: "currency", screen: .currency, label: "Currency", sub: "32 currencies", icon: "dollarsign.circle", accentKey: \.success),
-        HubTileData(id: "units", screen: .units, label: "Units", sub: "Length, mass…", icon: "ruler", accentKey: \.purple),
-        HubTileData(id: "temp", screen: .temp, label: "Temperature", sub: "°C ↔ °F ↔ K", icon: "thermometer.medium", accentKey: \.pink),
-        HubTileData(id: "date", screen: .date, label: "Date & Time", sub: "Timezones", icon: "calendar", accentKey: \.teal),
-        HubTileData(id: "sizes", screen: .sizes, label: "Clothing", sub: "EU · US · UK", icon: "tshirt", accentKey: \.yellow),
-        HubTileData(id: "tip", screen: .tip, label: "Tip & %", sub: "Split bill", icon: "percent", accentKey: \.red),
+        HubTileData(id: "finance", screen: .finance, labelKey: \.tileFinance, subKey: \.tileFinanceSub, icon: "building.columns", accentKey: \.blue),
+        HubTileData(id: "crypto", screen: .crypto, labelKey: \.tileCrypto, subKey: \.tileCryptoSub, icon: "bitcoinsign.circle", accentKey: \.yellow),
+        HubTileData(id: "currency", screen: .currency, labelKey: \.tileCurrency, subKey: \.tileCurrencySub, icon: "dollarsign.circle", accentKey: \.success),
+        HubTileData(id: "units", screen: .units, labelKey: \.tileUnits, subKey: \.tileUnitsSub, icon: "ruler", accentKey: \.purple),
+        HubTileData(id: "temp", screen: .temp, labelKey: \.tileTemp, subKey: \.tileTempSub, icon: "thermometer.medium", accentKey: \.pink),
+        HubTileData(id: "date", screen: .date, labelKey: \.tileDateTime, subKey: \.tileDateTimeSub, icon: "calendar", accentKey: \.teal),
+        HubTileData(id: "sizes", screen: .sizes, labelKey: \.tileClothing, subKey: \.tileClothingSub, icon: "tshirt", accentKey: \.yellow),
+        HubTileData(id: "tip", screen: .tip, labelKey: \.tileTip, subKey: \.tileTipSub, icon: "percent", accentKey: \.red),
+        HubTileData(id: "simple", screen: .simple, labelKey: \.tileSimple, subKey: \.tileSimpleSub, icon: "plus.forwardslash.minus", accentKey: \.accent),
+        HubTileData(id: "bmi", screen: .bmi, labelKey: \.tileBMI, subKey: \.tileBMISub, icon: "figure.stand", accentKey: \.success),
+        HubTileData(id: "engineering", screen: .engineering, labelKey: \.tileEngineering, subKey: \.tileEngineeringSub, icon: "gearshape.2", accentKey: \.teal),
+        HubTileData(id: "scientific", screen: .scientific, labelKey: \.tileScientific, subKey: \.tileScientificSub, icon: "function", accentKey: \.blue),
     ]
 }
 
 struct HubView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @Binding var navigationPath: NavigationPath
 
     private let columns = [
@@ -32,8 +37,8 @@ struct HubView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Calculator & converters")
-                    .font(.system(size: 14))
+                Text(L.hubSubtitle)
+                    .font(.custom("JetBrainsMono-Regular", size: 14))
                     .foregroundStyle(T.textMuted)
                     .padding(.horizontal, 4)
 
@@ -47,8 +52,8 @@ struct HubView: View {
 
                 // Recent card
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("RECENT")
-                        .font(.system(size: 11, weight: .semibold))
+                    Text(L.hubRecent)
+                        .font(.custom("JetBrainsMono-SemiBold", size: 11))
                         .tracking(0.6)
                         .foregroundStyle(T.textMuted)
 
@@ -68,13 +73,18 @@ struct HubView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
         }
-        .background(T.bg)
+        .background { TallyBackground(T: T, icons: [
+            "plus.forwardslash.minus", "function", "dollarsign.circle",
+            "ruler", "thermometer.medium", "calendar",
+            "tshirt", "percent", "building.columns", "figure.stand", "gearshape.2",
+        ]) }
         .navigationTitle("Tally")
     }
 }
 
 struct HubTile: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     let tile: HubTileData
     let action: () -> Void
 
@@ -87,20 +97,20 @@ struct HubTile: View {
                         .frame(width: 38, height: 38)
 
                     Image(systemName: tile.icon)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.custom("JetBrainsMono-SemiBold", size: 16))
                         .foregroundStyle(T[keyPath: tile.accentKey])
                 }
 
                 Spacer()
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(tile.label)
-                        .font(.system(size: 16, weight: .semibold))
+                    Text(L[keyPath: tile.labelKey])
+                        .font(.custom("JetBrainsMono-SemiBold", size: 16))
                         .foregroundStyle(T.text)
                         .tracking(-0.2)
 
-                    Text(tile.sub)
-                        .font(.system(size: 12))
+                    Text(L[keyPath: tile.subKey])
+                        .font(.custom("JetBrainsMono-Regular", size: 12))
                         .foregroundStyle(T.textMuted)
                 }
             }

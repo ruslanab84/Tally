@@ -2,7 +2,14 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @Binding var isDarkMode: Bool
+    @Binding var appLanguage: String
+    @Binding var accentColor: String
+
+    @AppStorage("numberFormat") private var numberFormat = "comma_dot"
+    @AppStorage("decimalPrecision") private var decimalPrecision = 4
+    @AppStorage("defaultCurrency") private var defaultCurrency = "USD"
 
     @State private var hapticEnabled = true
     @State private var soundEnabled = false
@@ -12,31 +19,36 @@ struct SettingsView: View {
         ScrollView {
             VStack(spacing: 16) {
                 // Appearance
-                SettingsSection(T: T, title: "Appearance") {
+                SettingsSection(T: T, title: L.appearance) {
                     // Theme
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Theme")
-                            .font(.system(size: 15, weight: .medium))
+                        Text(L.theme)
+                            .font(.custom("JetBrainsMono-Medium", size: 15))
                             .foregroundStyle(T.text)
 
                         HStack(spacing: 4) {
-                            ForEach(["Light", "Dark", "System"], id: \.self) { theme in
+                            let themeOptions: [(key: String, label: String)] = [
+                                ("light", L.light),
+                                ("dark", L.dark),
+                                ("system", L.system),
+                            ]
+                            ForEach(themeOptions, id: \.key) { option in
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.2)) {
-                                        if theme == "Dark" { isDarkMode = true }
-                                        else if theme == "Light" { isDarkMode = false }
+                                        if option.key == "dark" { isDarkMode = true }
+                                        else if option.key == "light" { isDarkMode = false }
                                     }
                                 } label: {
-                                    Text(theme)
-                                        .font(.system(size: 11, weight: .medium))
+                                    Text(option.label)
+                                        .font(.custom("JetBrainsMono-Medium", size: 11))
                                         .padding(.horizontal, 10)
                                         .padding(.vertical, 5)
                                         .background(
-                                            (theme == "Dark" && isDarkMode) || (theme == "Light" && !isDarkMode)
+                                            (option.key == "dark" && isDarkMode) || (option.key == "light" && !isDarkMode)
                                             ? T.accent : T.surfaceAlt
                                         )
                                         .foregroundStyle(
-                                            (theme == "Dark" && isDarkMode) || (theme == "Light" && !isDarkMode)
+                                            (option.key == "dark" && isDarkMode) || (option.key == "light" && !isDarkMode)
                                             ? .white : T.text
                                         )
                                         .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -52,19 +64,29 @@ struct SettingsView: View {
 
                     // Accent colors
                     HStack {
-                        Text("Accent")
-                            .font(.system(size: 15, weight: .medium))
+                        Text(L.accent)
+                            .font(.custom("JetBrainsMono-Medium", size: 15))
                             .foregroundStyle(T.text)
                         Spacer()
                         HStack(spacing: 6) {
-                            ForEach([T.accent, T.blue, T.success, T.purple, T.pink], id: \.description) { color in
-                                Circle()
-                                    .fill(color)
-                                    .frame(width: 22, height: 22)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(color == T.accent ? T.text : .clear, lineWidth: 2)
-                                    )
+                            ForEach(AccentTheme.allCases, id: \.rawValue) { theme in
+                                let color = isDarkMode ? theme.darkColor : theme.lightColor
+                                let isSelected = accentColor == theme.rawValue
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        accentColor = theme.rawValue
+                                    }
+                                } label: {
+                                    Circle()
+                                        .fill(color)
+                                        .frame(width: 22, height: 22)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(isSelected ? T.text : .clear, lineWidth: 2)
+                                                .frame(width: 28, height: 28)
+                                        )
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -73,52 +95,194 @@ struct SettingsView: View {
 
                     Divider().padding(.leading, 16)
 
-                    SettingsRow(T: T, label: "App icon", value: "Default", showChevron: true, isLast: true)
+                    SettingsRow(T: T, label: L.appIcon, value: L.defaultVal, showChevron: true, isLast: true)
                 }
 
                 // Language
-                SettingsSection(T: T, title: "Language") {
-                    SettingsRow(T: T, label: "App language", value: "English", showChevron: true)
+                SettingsSection(T: T, title: L.language) {
+                    HStack {
+                        Text(L.appLanguage)
+                            .font(.custom("JetBrainsMono-Medium", size: 15))
+                            .foregroundStyle(T.text)
+                        Spacer()
+                        Menu {
+                            ForEach(AppLanguage.allCases) { lang in
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        appLanguage = lang.rawValue
+                                    }
+                                } label: {
+                                    HStack {
+                                        Text("\(lang.flag) \(lang.displayName)")
+                                        if appLanguage == lang.rawValue {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            let current = AppLanguage(rawValue: appLanguage) ?? .en
+                            HStack(spacing: 6) {
+                                Text(current.flag)
+                                    .font(.custom("JetBrainsMono-Regular", size: 16))
+                                Text(current.displayName)
+                                    .font(.custom("JetBrainsMono-Medium", size: 14))
+                                    .foregroundStyle(T.textMuted)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.custom("JetBrainsMono-Regular", size: 10))
+                                    .foregroundStyle(T.textTertiary)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: "Number format", value: "1,234.56", showChevron: true, useMono: true)
+
+                    // Number format
+                    HStack {
+                        Text(L.numberFormat)
+                            .font(.custom("JetBrainsMono-Medium", size: 15))
+                            .foregroundStyle(T.text)
+                        Spacer()
+                        Menu {
+                            ForEach(NumberFormatOption.allCases, id: \.rawValue) { opt in
+                                Button {
+                                    numberFormat = opt.rawValue
+                                } label: {
+                                    HStack {
+                                        Text(opt.example)
+                                        if numberFormat == opt.rawValue {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(NumberFormatOption(rawValue: numberFormat)?.example ?? "1,234.56")
+                                    .font(.custom("JetBrainsMono-Medium", size: 14))
+                                    .foregroundStyle(T.textMuted)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.custom("JetBrainsMono-Regular", size: 10))
+                                    .foregroundStyle(T.textTertiary)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .frame(minHeight: 50)
+
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: "Decimal precision", value: "4 digits", showChevron: true, isLast: true)
+
+                    // Decimal precision
+                    HStack {
+                        Text(L.decimalPrecision)
+                            .font(.custom("JetBrainsMono-Medium", size: 15))
+                            .foregroundStyle(T.text)
+                        Spacer()
+                        Menu {
+                            ForEach([2, 4, 6, 8], id: \.self) { n in
+                                Button {
+                                    decimalPrecision = n
+                                } label: {
+                                    HStack {
+                                        Text("\(n) \(L.digits)")
+                                        if decimalPrecision == n {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("\(decimalPrecision) \(L.digits)")
+                                    .font(.custom("JetBrainsMono-Medium", size: 14))
+                                    .foregroundStyle(T.textMuted)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.custom("JetBrainsMono-Regular", size: 10))
+                                    .foregroundStyle(T.textTertiary)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .frame(minHeight: 50)
                 }
 
                 // Calculator
-                SettingsSection(T: T, title: "Calculator") {
-                    SettingsToggleRow(T: T, label: "Haptic feedback", isOn: $hapticEnabled)
+                SettingsSection(T: T, title: L.calculator) {
+                    SettingsToggleRow(T: T, label: L.hapticFeedback, isOn: $hapticEnabled)
                     Divider().padding(.leading, 16)
-                    SettingsToggleRow(T: T, label: "Sound", isOn: $soundEnabled)
+                    SettingsToggleRow(T: T, label: L.sound, isOn: $soundEnabled)
                     Divider().padding(.leading, 16)
-                    SettingsToggleRow(T: T, label: "Live preview", isOn: $livePreview)
+                    SettingsToggleRow(T: T, label: L.livePreview, isOn: $livePreview)
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: "Angle units", value: "Degrees", showChevron: true, isLast: true)
+                    SettingsRow(T: T, label: L.angleUnits, value: L.degrees, showChevron: true, isLast: true)
                 }
 
                 // Conversions
-                SettingsSection(T: T, title: "Conversions") {
-                    SettingsRow(T: T, label: "Default currency", value: "USD", showChevron: true)
+                SettingsSection(T: T, title: L.conversionsSection) {
+                    HStack {
+                        Text(L.defaultCurrency)
+                            .font(.custom("JetBrainsMono-Medium", size: 15))
+                            .foregroundStyle(T.text)
+                        Spacer()
+                        Menu {
+                            ForEach(Currency.all.prefix(20)) { cur in
+                                Button {
+                                    defaultCurrency = cur.code
+                                } label: {
+                                    HStack {
+                                        Text("\(cur.flag) \(cur.code) — \(cur.name)")
+                                        if defaultCurrency == cur.code {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            let cur = Currency.all.first { $0.code == defaultCurrency }
+                            HStack(spacing: 6) {
+                                Text(cur?.flag ?? "🏳️")
+                                    .font(.custom("JetBrainsMono-Regular", size: 16))
+                                Text(defaultCurrency)
+                                    .font(.custom("JetBrainsMono-Medium", size: 14))
+                                    .foregroundStyle(T.textMuted)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.custom("JetBrainsMono-Regular", size: 10))
+                                    .foregroundStyle(T.textTertiary)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .frame(minHeight: 50)
+
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: "Favorite units", value: "6 selected", showChevron: true)
+                    SettingsRow(T: T, label: L.favoriteUnits, value: "6 \(L.selected)", showChevron: true)
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: "Update rates", value: "Daily", showChevron: true, isLast: true)
+                    SettingsRow(T: T, label: L.updateRates, value: L.daily, showChevron: true, isLast: true)
                 }
 
                 // About
-                SettingsSection(T: T, title: "About") {
-                    SettingsRow(T: T, label: "Version", value: "1.0 (beta)", showChevron: false, useMono: true)
+                SettingsSection(T: T, title: L.about) {
+                    SettingsRow(T: T, label: L.version, value: "1.0 (beta)", showChevron: false, useMono: true)
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: "Privacy", showChevron: true)
+                    SettingsRow(T: T, label: L.privacy, showChevron: true)
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: "Send feedback", showChevron: true, isLast: true)
+                    SettingsRow(T: T, label: L.sendFeedback, showChevron: true, isLast: true)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
         }
-        .background(T.bg)
-        .navigationTitle("Settings")
+        .background { TallyBackground(T: T, icons: [
+            "gearshape", "paintbrush", "moon",
+            "sun.max", "bell", "shield",
+            "wrench", "slider.horizontal.3",
+        ]) }
+        .navigationTitle(L.navSettings)
         .navigationBarTitleDisplayMode(.large)
     }
 }
@@ -133,7 +297,7 @@ private struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title.uppercased())
-                .font(.system(size: 11, weight: .semibold))
+                .font(.custom("JetBrainsMono-SemiBold", size: 11))
                 .tracking(0.6)
                 .foregroundStyle(T.textMuted)
                 .padding(.horizontal, 4)
@@ -158,7 +322,7 @@ private struct SettingsRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: 15, weight: .medium))
+                .font(.custom("JetBrainsMono-Medium", size: 15))
                 .foregroundStyle(T.text)
             Spacer()
             if let value {
@@ -168,7 +332,7 @@ private struct SettingsRow: View {
             }
             if showChevron {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("JetBrainsMono-SemiBold", size: 12))
                     .foregroundStyle(T.textTertiary)
             }
         }
@@ -186,7 +350,7 @@ private struct SettingsToggleRow: View {
     var body: some View {
         Toggle(isOn: $isOn) {
             Text(label)
-                .font(.system(size: 15, weight: .medium))
+                .font(.custom("JetBrainsMono-Medium", size: 15))
                 .foregroundStyle(T.text)
         }
         .tint(T.accent)
@@ -196,9 +360,23 @@ private struct SettingsToggleRow: View {
     }
 }
 
+enum NumberFormatOption: String, CaseIterable {
+    case comma_dot = "comma_dot"
+    case dot_comma = "dot_comma"
+    case space_comma = "space_comma"
+
+    var example: String {
+        switch self {
+        case .comma_dot:  return "1,234.56"
+        case .dot_comma:  return "1.234,56"
+        case .space_comma: return "1 234,56"
+        }
+    }
+}
+
 #Preview {
     NavigationStack {
-        SettingsView(isDarkMode: .constant(false))
+        SettingsView(isDarkMode: .constant(false), appLanguage: .constant("en"), accentColor: .constant("orange"))
     }
     .environment(\.tokens, .light)
 }

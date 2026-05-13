@@ -221,14 +221,19 @@ struct CryptoView: View {
     // MARK: - Formatting
 
     private func formatUSD(_ value: Double) -> String {
-        if value >= 1000 {
-            return String(format: "$%,.2f", value)
-        } else if value >= 1 {
-            return String(format: "$%.2f", value)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        formatter.currencySymbol = "$"
+        formatter.locale = Locale(identifier: "en_US")
+        if value >= 1 {
+            formatter.maximumFractionDigits = 2
+            formatter.minimumFractionDigits = 2
         } else if value > 0 {
-            return String(format: "$%.4f", value)
+            formatter.maximumFractionDigits = 4
+            formatter.minimumFractionDigits = 4
         }
-        return "$0.00"
+        return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
     }
 }
 

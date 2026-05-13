@@ -1,0 +1,45 @@
+# Build artifacts
+*.xcarchive
+*.ipa
+*.dSYM
+build/
+DerivedData/
+*.o
+*.d
+*.hmap
+*.LinkFileList
+
+# Xcode user data
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+.build/
+*.resolved
+
+# CocoaPods (if used)
+Pods/
+Podfile.lock
+
+# Compiled fonts / resources (source files are enough)
+*.ttf
+*.otf
+
+# Test results & coverage
+*.xcresult
+TestResults/
+
+# OS & editor junk
+.DS_Store
+Thumbs.db
+*.swp
+
+# Large binary assets (use asset catalog paths instead)
+*.png
+*.jpg
+*.jpeg
+*.pdf
+
+# Logs
+*.log

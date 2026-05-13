@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SizesView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var category = "shoes"
     @State private var gender = "men"
     @State private var regionIndex = 0
@@ -19,10 +20,10 @@ struct SizesView: View {
             VStack(spacing: 14) {
                 // Category
                 Picker("Category", selection: $category) {
-                    Text("Shirts").tag("shirts")
-                    Text("Pants").tag("pants")
-                    Text("Shoes").tag("shoes")
-                    Text("Kids").tag("kids")
+                    Text(L.shirts).tag("shirts")
+                    Text(L.pants).tag("pants")
+                    Text(L.shoes).tag("shoes")
+                    Text(L.kids).tag("kids")
                 }
                 .pickerStyle(.segmented)
                 .onChange(of: category) { _, _ in sizeIndex = 0 }
@@ -35,8 +36,8 @@ struct SizesView: View {
                                 gender = g
                                 sizeIndex = 0
                             } label: {
-                                Text(g == "men" ? "Men's" : "Women's")
-                                    .font(.system(size: 13, weight: .semibold))
+                                Text(g == "men" ? L.mens : L.womens)
+                                    .font(.custom("JetBrainsMono-SemiBold", size: 13))
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 8)
                                     .background(gender == g ? T.accent : .clear)
@@ -54,8 +55,8 @@ struct SizesView: View {
 
                 // Size selector
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("SELECT YOUR SIZE")
-                        .font(.system(size: 11, weight: .semibold))
+                    Text(L.selectYourSize)
+                        .font(.custom("JetBrainsMono-SemiBold", size: 11))
                         .tracking(0.6)
                         .foregroundStyle(T.textMuted)
 
@@ -67,9 +68,9 @@ struct SizesView: View {
                                     withAnimation(.easeInOut(duration: 0.1)) { regionIndex = i }
                                 } label: {
                                     HStack(spacing: 4) {
-                                        Text(region.flag).font(.system(size: 14))
+                                        Text(region.flag).font(.custom("JetBrainsMono-Regular", size: 14))
                                         Text(region.code)
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .font(.custom("JetBrainsMono-SemiBold", size: 12))
                                     }
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
@@ -107,8 +108,8 @@ struct SizesView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
 
                 // Conversions
-                Text("CONVERSIONS")
-                    .font(.system(size: 11, weight: .semibold))
+                Text(L.conversions)
+                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,14 +118,14 @@ struct SizesView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(chart.regions.enumerated()), id: \.offset) { i, region in
                         HStack(spacing: 12) {
-                            Text(region.flag).font(.system(size: 22))
+                            Text(region.flag).font(.custom("JetBrainsMono-Regular", size: 22))
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(region.code)
-                                    .font(.system(size: 15, weight: .semibold))
+                                    .font(.custom("JetBrainsMono-SemiBold", size: 15))
                                     .foregroundStyle(T.text)
                                 Text(region.name)
-                                    .font(.system(size: 11))
+                                    .font(.custom("JetBrainsMono-Regular", size: 11))
                                     .foregroundStyle(T.textMuted)
                             }
 
@@ -149,8 +150,12 @@ struct SizesView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
         }
-        .background(T.bg)
-        .navigationTitle("Clothing")
+        .background { TallyBackground(T: T, icons: [
+            "tshirt", "shoe", "ruler",
+            "tag", "hanger", "bag",
+            "scissors", "crown",
+        ]) }
+        .navigationTitle(L.navClothing)
         .navigationBarTitleDisplayMode(.large)
     }
 }

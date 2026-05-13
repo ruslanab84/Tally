@@ -4,11 +4,13 @@ import Foundation
 @Observable
 class CurrencyService {
     var rates: [String: Double] = [:]
+    var previousRates: [String: Double] = [:]
     var lastUpdated: Date?
     var isLoading = false
     var isOffline = false
 
     private let cacheRatesKey = "tally_cached_rates"
+    private let cachePreviousRatesKey = "tally_cached_previous_rates"
     private let cacheTimestampKey = "tally_cached_rates_timestamp"
     private let apiURL = "https://open.er-api.com/v6/latest/USD"
 
@@ -29,7 +31,9 @@ class CurrencyService {
                 markOffline()
                 return
             }
+            previousRates = rates
             rates = response.rates
+            applyPeggedRates()
             lastUpdated = Date()
             isOffline = false
             saveCachedRates()
@@ -40,6 +44,13 @@ class CurrencyService {
 
     func rateFor(_ code: String) -> Double {
         rates[code] ?? 1.0
+    }
+
+    func changeFor(_ code: String) -> Double {
+        guard let current = rates[code], let previous = previousRates[code], previous > 0 else {
+            return 0
+        }
+        return ((current - previous) / previous) * 100
     }
 
     var lastUpdatedText: String {
@@ -61,6 +72,10 @@ class CurrencyService {
            let cached = try? JSONDecoder().decode([String: Double].self, from: data) {
             rates = cached
             lastUpdated = UserDefaults.standard.object(forKey: cacheTimestampKey) as? Date
+            if let prevData = UserDefaults.standard.data(forKey: cachePreviousRatesKey),
+               let prevCached = try? JSONDecoder().decode([String: Double].self, from: prevData) {
+                previousRates = prevCached
+            }
             isOffline = true
         } else {
             loadFallbackRates()
@@ -72,6 +87,9 @@ class CurrencyService {
             UserDefaults.standard.set(data, forKey: cacheRatesKey)
             UserDefaults.standard.set(lastUpdated, forKey: cacheTimestampKey)
         }
+        if let prevData = try? JSONEncoder().encode(previousRates) {
+            UserDefaults.standard.set(prevData, forKey: cachePreviousRatesKey)
+        }
     }
 
     private func loadFallbackRates() {
@@ -79,6 +97,16 @@ class CurrencyService {
             rates[currency.code] = currency.rate
         }
         isOffline = true
+    }
+
+    private let peggedRates: [String: Double] = [
+        "AZN": 1.7,
+    ]
+
+    private func applyPeggedRates() {
+        for (code, rate) in peggedRates {
+            rates[code] = rate
+        }
     }
 
     private func markOffline() {

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SimpleCalcView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var display = "0"
     @State private var expression = ""
     @State private var firstOperand: Double = 0
@@ -71,8 +72,11 @@ struct SimpleCalcView: View {
             .padding(.horizontal, 14)
             .padding(.bottom, 16)
         }
-        .background(T.bg)
-        .navigationTitle("Calculator")
+        .background { TallyBackground(T: T, icons: [
+            "plus", "minus", "multiply", "divide",
+            "equal", "number", "plusminus", "percent",
+        ]) }
+        .navigationTitle(L.navCalculator)
         .navigationBarTitleDisplayMode(.large)
         .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
     }
@@ -220,7 +224,7 @@ struct CalcKeyButton: View {
     var body: some View {
         Button(action: action) {
             Text(label)
-                .font(.system(size: kind == .fn ? 18 : 22, weight: .medium))
+                .font(.custom("JetBrainsMono-Medium", size: kind == .fn ? 18 : 22))
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(bgColor)

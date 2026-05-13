@@ -2,6 +2,7 @@ import SwiftUI
 
 struct EngineeringView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var selectedCategory = EngCategory.all[0]
     @State private var fromUnit: EngUnit
     @State private var toUnit: EngUnit
@@ -79,7 +80,7 @@ struct EngineeringView: View {
                     }
 
                     // FROM chips
-                    Text("FROM")
+                    Text(L.from)
                         .font(.custom("JetBrainsMono-SemiBold", size: 10))
                         .tracking(0.4)
                         .foregroundStyle(T.textMuted)
@@ -91,7 +92,7 @@ struct EngineeringView: View {
                     }
 
                     // TO chips
-                    Text("TO")
+                    Text(L.to)
                         .font(.custom("JetBrainsMono-SemiBold", size: 10))
                         .tracking(0.4)
                         .foregroundStyle(T.textMuted)
@@ -107,7 +108,7 @@ struct EngineeringView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
 
                 // All conversions
-                Text("ALL CONVERSIONS")
+                Text(L.allConversions)
                     .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
@@ -151,7 +152,7 @@ struct EngineeringView: View {
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.large))
 
                 // Categories
-                Text("CATEGORIES")
+                Text(L.categories)
                     .font(.custom("JetBrainsMono-SemiBold", size: 11))
                     .tracking(0.6)
                     .foregroundStyle(T.textMuted)
@@ -202,12 +203,12 @@ struct EngineeringView: View {
             "arrow.up.right", "gearshape.2", "flame",
             "wrench.and.screwdriver", "atom",
         ]) }
-        .navigationTitle("Engineering")
+        .navigationTitle(L.navEngineering)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("Done") { inputFocused = false }
+                Button(L.done) { inputFocused = false }
             }
         }
     }

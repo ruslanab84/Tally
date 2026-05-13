@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HistoryView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     private let groups = HistoryGroup.sampleData
 
     var body: some View {
@@ -10,10 +11,10 @@ struct HistoryView: View {
                 // Search bar
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 14))
+                        .font(.custom("JetBrainsMono-Regular", size: 14))
                         .foregroundStyle(T.textMuted)
-                    Text("Search history")
-                        .font(.system(size: 14))
+                    Text(L.searchHistory)
+                        .font(.custom("JetBrainsMono-Regular", size: 14))
                         .foregroundStyle(T.textMuted)
                     Spacer()
                 }
@@ -25,7 +26,7 @@ struct HistoryView: View {
                 ForEach(groups) { group in
                     VStack(alignment: .leading, spacing: 8) {
                         Text(group.date.uppercased())
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.custom("JetBrainsMono-SemiBold", size: 11))
                             .tracking(0.6)
                             .foregroundStyle(T.textMuted)
                             .padding(.horizontal, 4)
@@ -53,7 +54,7 @@ struct HistoryView: View {
 
                                     Button(action: {}) {
                                         Image(systemName: "doc.on.doc")
-                                            .font(.system(size: 13))
+                                            .font(.custom("JetBrainsMono-Regular", size: 13))
                                             .foregroundStyle(T.textMuted)
                                     }
                                     .buttonStyle(.plain)
@@ -74,8 +75,12 @@ struct HistoryView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
         }
-        .background(T.bg)
-        .navigationTitle("History")
+        .background { TallyBackground(T: T, icons: [
+            "clock.arrow.circlepath", "list.bullet", "doc.text",
+            "tray.full", "archivebox", "bookmark",
+            "text.alignleft", "clock",
+        ]) }
+        .navigationTitle(L.navHistory)
         .navigationBarTitleDisplayMode(.large)
     }
 }

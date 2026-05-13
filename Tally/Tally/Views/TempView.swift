@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TempView: View {
     @Environment(\.tokens) private var T
+    @Environment(\.loc) private var L
     @State private var inputText = "22"
     @State private var selectedUnit = "°C"
     @FocusState private var inputFocused: Bool
@@ -51,7 +52,7 @@ struct TempView: View {
                             switchUnit(to: unit)
                         } label: {
                             Text(unit)
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.custom("JetBrainsMono-SemiBold", size: 14))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
                                 .background(selectedUnit == unit ? T.accent : .clear)
@@ -70,7 +71,7 @@ struct TempView: View {
                 VStack(spacing: 16) {
                     HStack(alignment: .bottom) {
                         Text(selectedUnit)
-                            .font(.system(size: 14))
+                            .font(.custom("JetBrainsMono-Regular", size: 14))
                             .foregroundStyle(T.textMuted)
                         Spacer()
                         HStack(alignment: .bottom, spacing: 2) {
@@ -139,30 +140,30 @@ struct TempView: View {
 
                 // Conversion results (hide the selected unit)
                 if selectedUnit != "°C" {
-                    TempResultRow(T: T, label: "Celsius", unit: "°C",
+                    TempResultRow(T: T, label: L.celsius, unit: "°C",
                                   value: formatTemp(celsius) + "°C")
                 }
                 if selectedUnit != "°F" {
-                    TempResultRow(T: T, label: "Fahrenheit", unit: "°F",
+                    TempResultRow(T: T, label: L.fahrenheit, unit: "°F",
                                   value: formatTemp(fahrenheit) + "°F")
                 }
                 if selectedUnit != "K" {
-                    TempResultRow(T: T, label: "Kelvin", unit: "K",
+                    TempResultRow(T: T, label: L.kelvin, unit: "K",
                                   value: formatTemp(kelvin) + " K")
                 }
 
                 // Reference
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Reference")
-                            .font(.system(size: 14, weight: .semibold))
+                        Text(L.reference)
+                            .font(.custom("JetBrainsMono-SemiBold", size: 14))
                             .foregroundStyle(T.text)
                         Text(referenceText)
-                            .font(.system(size: 11))
+                            .font(.custom("JetBrainsMono-Regular", size: 11))
                             .foregroundStyle(T.textMuted)
                     }
                     Spacer()
-                    Text(referenceEmoji).font(.system(size: 18))
+                    Text(referenceEmoji).font(.custom("JetBrainsMono-Regular", size: 18))
                 }
                 .padding(.horizontal, 18)
                 .padding(.vertical, 14)
@@ -173,8 +174,12 @@ struct TempView: View {
             .padding(.bottom, 20)
         }
         .scrollDismissesKeyboard(.interactively)
-        .background(T.bg)
-        .navigationTitle("Temperature")
+        .background { TallyBackground(T: T, icons: [
+            "thermometer.medium", "snowflake", "sun.max",
+            "flame", "wind", "cloud.sun", "thermometer.low",
+            "thermometer.high",
+        ]) }
+        .navigationTitle(L.navTemp)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
@@ -186,7 +191,7 @@ struct TempView: View {
                     }
                 }
                 Spacer()
-                Button("Done") { inputFocused = false }
+                Button(L.done) { inputFocused = false }
             }
         }
     }
@@ -217,14 +222,14 @@ struct TempView: View {
 
     private var referenceText: String {
         let c = celsius
-        if c < -20 { return "Extreme cold" }
-        if c < 0   { return "Below freezing" }
-        if c < 10  { return "Cold" }
-        if c < 20  { return "Cool" }
-        if c < 26  { return "Comfortable room temp" }
-        if c < 35  { return "Warm" }
-        if c < 45  { return "Hot" }
-        return "Extreme heat"
+        if c < -20 { return L.tempExtremeCold }
+        if c < 0   { return L.tempBelowFreezing }
+        if c < 10  { return L.tempCold }
+        if c < 20  { return L.tempCool }
+        if c < 26  { return L.tempComfortable }
+        if c < 35  { return L.tempWarm }
+        if c < 45  { return L.tempHot }
+        return L.tempExtremeHeat
     }
 
     private var referenceEmoji: String {
@@ -249,10 +254,10 @@ private struct TempResultRow: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.custom("JetBrainsMono-SemiBold", size: 14))
                     .foregroundStyle(T.text)
                 Text(unit)
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono-Regular", size: 11))
                     .foregroundStyle(T.textMuted)
             }
             Spacer()
