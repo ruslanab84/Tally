@@ -1032,10 +1032,14 @@ struct FinanceView: View {
         let monthly = Double(monthlyContribution) ?? 0
         let totalMonths = Int(months)
 
-        let result = simulateDeposit(initial: initial, annualRate: annual, totalMonths: totalMonths, monthly: monthly)
+        let taxRate = Double(depositTaxRate) ?? 0
+        let result = simulateDeposit(initial: initial, annualRate: annual, totalMonths: totalMonths, monthly: monthly, taxRate: taxRate)
         let finalAmt = result.final
         let totalDep = result.totalDep
-        let interest = result.interest
+        let grossInterest = result.grossInterest
+        let taxPaid = result.taxPaid
+        let netInterest = grossInterest - taxPaid
+        let hasTax = taxRate > 0 && taxPaid > 0
 
         return VStack(spacing: 14) {
             financeField(L.initialDeposit, prefix: "$", text: $depositAmount, focus: .depAmt)
@@ -1080,6 +1084,9 @@ struct FinanceView: View {
             .background(T.surface)
             .clipShape(RoundedRectangle(cornerRadius: TallyRadius.large))
 
+            // Tax on interest
+            financeField(L.interestTax, suffix: "%", text: $depositTaxRate, focus: .depTax)
+
             if finalAmt > 0 && termVal > 0 {
                 VStack(spacing: 0) {
                     Text(L.finalAmount)
@@ -1104,14 +1111,27 @@ struct FinanceView: View {
 
                     summaryRow(L.totalDeposited, fmtCurrency(totalDep))
                         .padding(.bottom, 6)
-                    summaryRow(L.interestEarned, fmtCurrency(interest))
+
+                    if hasTax {
+                        summaryRow(L.interestEarned, fmtCurrency(grossInterest))
+                            .padding(.bottom, 6)
+                        summaryRow(L.taxPaid, "−\(fmtCurrency(taxPaid))")
+                            .padding(.bottom, 6)
+                        summaryRow(L.afterTaxTotal, fmtCurrency(netInterest))
+                            .padding(.bottom, 6)
+                    } else {
+                        summaryRow(L.interestEarned, fmtCurrency(grossInterest))
+                            .padding(.bottom, 6)
+                    }
+
                     if annual > 0 {
                         summaryRow(L.effectiveRate, String(format: "%.2f%%", (finalAmt / totalDep - 1) * 100 / max(1, Double(totalMonths) / 12)))
-                            .padding(.top, 6)
+                            .padding(.bottom, 6)
                     }
 
                     if finalAmt > 0 {
-                        let depFrac = CGFloat(totalDep / finalAmt)
+                        let netForFrac = hasTax ? netInterest : grossInterest
+                        let depFrac = CGFloat(totalDep / (totalDep + max(netForFrac, 0)))
                         let interestPct = Int((1 - depFrac) * 100)
                         VStack(spacing: 6) {
                             GeometryReader { geo in
@@ -1134,7 +1154,7 @@ struct FinanceView: View {
                                 Spacer()
                                 HStack(spacing: 4) {
                                     Circle().fill(.white).frame(width: 6, height: 6)
-                                    Text("\(L.interest) \(interestPct)%")
+                                    Text("\(hasTax ? L.afterTaxTotal : L.interest) \(interestPct)%")
                                         .font(.custom("JetBrainsMono-Regular", size: 10))
                                 }
                             }
