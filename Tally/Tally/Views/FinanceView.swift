@@ -51,6 +51,9 @@ struct FinanceView: View {
     @State private var rvbInvestReturn = "7"
     @State private var rvbYears = 10
 
+    @State private var showLoanReminders = false
+    @State private var loanReminderStore = LoanReminderStore()
+
     @FocusState private var focused: FocusField?
 
     enum FocusField: Hashable {
@@ -195,11 +198,44 @@ struct FinanceView: View {
                 .background(T.accent)
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
 
+                // Payment reminder button
+                Button { showLoanReminders = true } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "bell.badge.fill")
+                            .font(.system(size: 15))
+                        Text(L.loanSetReminder)
+                            .font(.custom("JetBrainsMono-SemiBold", size: 14))
+                        Spacer()
+                        if !loanReminderStore.reminders.isEmpty {
+                            Text("\(loanReminderStore.reminders.count)")
+                                .font(.custom("JetBrainsMono-SemiBold", size: 11))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 7)
+                                .padding(.vertical, 3)
+                                .background(T.accent)
+                                .clipShape(Capsule())
+                        }
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundStyle(T.accent)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 13)
+                    .background(T.accentSoft)
+                    .clipShape(RoundedRectangle(cornerRadius: TallyRadius.medium))
+                }
+                .buttonStyle(.plain)
+
                 // Breakdown
                 if months > 0 && months <= 600 {
                     loanSchedule(principal: principal, monthlyRate: mr, payment: payment, totalMonths: Int(months))
                 }
             }
+        }
+        .sheet(isPresented: $showLoanReminders) {
+            LoanRemindersView(store: loanReminderStore, suggestedPayment: payment)
+                .environment(\.tokens, T)
+                .environment(\.loc, L)
         }
     }
 

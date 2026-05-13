@@ -202,6 +202,14 @@ struct Loc {
     let scenario: String
     let saved: String
     let debtBalance: String
+    let loanSetReminder: String
+    let loanReminderAdd: String
+    let loanReminderName: String
+    let loanReminderPayment: String
+    let loanReminderPayDay: String
+    let loanReminderDaysBefore: String
+    let loanReminderActive: String
+    let loanReminderDenied: String
 
     // Rent vs Buy
     let rentVsBuy: String
@@ -387,6 +395,10 @@ extension Loc {
         totalMonthly: "TOTAL MONTHLY", pAndI: "Principal & Interest", pmi: "PMI",
         lastPaymentDate: "Last payment", extraPaymentLabel: "EXTRA MONTHLY",
         scenario: "SCENARIO", saved: "saved", debtBalance: "DEBT BALANCE",
+        loanSetReminder: "Payment Reminder", loanReminderAdd: "Add Reminder",
+        loanReminderName: "Name", loanReminderPayment: "Payment",
+        loanReminderPayDay: "Payment Day", loanReminderDaysBefore: "Notify Before",
+        loanReminderActive: "Active Reminders", loanReminderDenied: "Enable notifications in Settings",
         rentVsBuy: "Rent/Buy", monthlyRent: "MONTHLY RENT", rentIncrease: "RENT INCREASE %/yr",
         homeAppreciation: "HOME APPRECIATION %/yr", yearsCompare: "YEARS TO COMPARE",
         investReturn: "INVEST RETURN %/yr", renting: "RENTING", buying: "BUYING",
@@ -486,6 +498,10 @@ extension Loc {
         totalMonthly: "ИТОГО В МЕСЯЦ", pAndI: "Долг и проценты", pmi: "PMI (страх.)",
         lastPaymentDate: "Последний платёж", extraPaymentLabel: "ДОПЛАТА В МЕС.",
         scenario: "СЦЕНАРИЙ", saved: "экономия", debtBalance: "ОСТАТОК ДОЛГА",
+        loanSetReminder: "Напоминание об оплате", loanReminderAdd: "Добавить",
+        loanReminderName: "Название", loanReminderPayment: "Платёж",
+        loanReminderPayDay: "День оплаты", loanReminderDaysBefore: "Уведомить за",
+        loanReminderActive: "Активные", loanReminderDenied: "Включите уведомления в Настройках",
         rentVsBuy: "Аренда/Покупка", monthlyRent: "ЕЖЕМЕС. АРЕНДА", rentIncrease: "РОСТ АРЕНДЫ %/год",
         homeAppreciation: "РОСТ СТОИМОСТИ %/год", yearsCompare: "ЛЕТ ДЛЯ СРАВНЕНИЯ",
         investReturn: "ДОХОДНОСТЬ %/год", renting: "АРЕНДА", buying: "ПОКУПКА",
@@ -585,6 +601,10 @@ extension Loc {
         totalMonthly: "MONATL. GESAMT", pAndI: "Tilgung & Zinsen", pmi: "PMI",
         lastPaymentDate: "Letzte Zahlung", extraPaymentLabel: "EXTRA MONATL.",
         scenario: "SZENARIO", saved: "gespart", debtBalance: "RESTSCHULD",
+        loanSetReminder: "Zahlungserinnerung", loanReminderAdd: "Hinzufügen",
+        loanReminderName: "Name", loanReminderPayment: "Zahlung",
+        loanReminderPayDay: "Zahltag", loanReminderDaysBefore: "Erinnern vor",
+        loanReminderActive: "Aktive Erinnerungen", loanReminderDenied: "Benachrichtigungen in Einstellungen aktivieren",
         rentVsBuy: "Miete/Kauf", monthlyRent: "MONATL. MIETE", rentIncrease: "MIETERHÖHUNG %/J",
         homeAppreciation: "WERTSTEIGERUNG %/J", yearsCompare: "VERGLEICHSJAHRE",
         investReturn: "ANLAGERENDITE %/J", renting: "MIETEN", buying: "KAUFEN",
@@ -684,6 +704,10 @@ extension Loc {
         totalMonthly: "TOTAL MENSUAL", pAndI: "Capital e intereses", pmi: "PMI",
         lastPaymentDate: "Último pago", extraPaymentLabel: "PAGO EXTRA",
         scenario: "ESCENARIO", saved: "ahorrado", debtBalance: "DEUDA RESTANTE",
+        loanSetReminder: "Recordatorio de pago", loanReminderAdd: "Agregar",
+        loanReminderName: "Nombre", loanReminderPayment: "Pago",
+        loanReminderPayDay: "Día de pago", loanReminderDaysBefore: "Notificar antes de",
+        loanReminderActive: "Recordatorios activos", loanReminderDenied: "Activar notificaciones en Ajustes",
         rentVsBuy: "Alq./Compra", monthlyRent: "RENTA MENSUAL", rentIncrease: "AUMENTO RENTA %/a",
         homeAppreciation: "APRECIACIÓN INMUEBLE %", yearsCompare: "AÑOS A COMPARAR",
         investReturn: "RENTAB. INVERSIÓN %", renting: "ALQUILAR", buying: "COMPRAR",
@@ -783,6 +807,10 @@ extension Loc {
         totalMonthly: "TOTAL MENSUEL", pAndI: "Capital & intérêts", pmi: "PMI",
         lastPaymentDate: "Dernier paiement", extraPaymentLabel: "EXTRA MENSUEL",
         scenario: "SCÉNARIO", saved: "économisé", debtBalance: "SOLDE DETTE",
+        loanSetReminder: "Rappel de paiement", loanReminderAdd: "Ajouter",
+        loanReminderName: "Nom", loanReminderPayment: "Paiement",
+        loanReminderPayDay: "Jour de paiement", loanReminderDaysBefore: "Rappeler avant",
+        loanReminderActive: "Rappels actifs", loanReminderDenied: "Activer les notifications dans Réglages",
         rentVsBuy: "Louer/Acheter", monthlyRent: "LOYER MENSUEL", rentIncrease: "HAUSSE LOYER %/an",
         homeAppreciation: "VALORISATION %/an", yearsCompare: "ANNÉES À COMPARER",
         investReturn: "RENDEMENT INV. %/an", renting: "LOUER", buying: "ACHETER",
@@ -882,6 +910,10 @@ extension Loc {
         totalMonthly: "TOTALE MENSILE", pAndI: "Capitale & interessi", pmi: "PMI",
         lastPaymentDate: "Ultimo pagamento", extraPaymentLabel: "EXTRA MENSILE",
         scenario: "SCENARIO", saved: "risparmiato", debtBalance: "DEBITO RESTANTE",
+        loanSetReminder: "Promemoria pagamento", loanReminderAdd: "Aggiungi",
+        loanReminderName: "Nome", loanReminderPayment: "Pagamento",
+        loanReminderPayDay: "Giorno di pagamento", loanReminderDaysBefore: "Ricorda prima di",
+        loanReminderActive: "Promemoria attivi", loanReminderDenied: "Attiva le notifiche nelle Impostazioni",
         rentVsBuy: "Affitto/Acquisto", monthlyRent: "AFFITTO MENSILE", rentIncrease: "AUMENTO AFFITTO %",
         homeAppreciation: "RIVALUTAZIONE %/anno", yearsCompare: "ANNI DA CONFRONTARE",
         investReturn: "RENDIMENTO INV. %", renting: "AFFITTARE", buying: "ACQUISTARE",
@@ -981,6 +1013,10 @@ extension Loc {
         totalMonthly: "TOTAL MENSAL", pAndI: "Capital & juros", pmi: "PMI",
         lastPaymentDate: "Último pagamento", extraPaymentLabel: "EXTRA MENSAL",
         scenario: "CENÁRIO", saved: "poupado", debtBalance: "SALDO DEVEDOR",
+        loanSetReminder: "Lembrete de pagamento", loanReminderAdd: "Adicionar",
+        loanReminderName: "Nome", loanReminderPayment: "Pagamento",
+        loanReminderPayDay: "Dia de pagamento", loanReminderDaysBefore: "Notificar antes de",
+        loanReminderActive: "Lembretes ativos", loanReminderDenied: "Ativar notificações em Configurações",
         rentVsBuy: "Alug./Compra", monthlyRent: "ALUGUEL MENSAL", rentIncrease: "AUMENTO ALUGUEL %",
         homeAppreciation: "VALORIZAÇÃO %/ano", yearsCompare: "ANOS A COMPARAR",
         investReturn: "RETORNO INV. %/ano", renting: "ALUGAR", buying: "COMPRAR",
@@ -1080,6 +1116,10 @@ extension Loc {
         totalMonthly: "TOPLAM AYLIK", pAndI: "Anapara & faiz", pmi: "PMI",
         lastPaymentDate: "Son ödeme", extraPaymentLabel: "EK ÖDEME",
         scenario: "SENARYO", saved: "tasarruf", debtBalance: "BORÇ BAKİYESİ",
+        loanSetReminder: "Ödeme hatırlatıcısı", loanReminderAdd: "Ekle",
+        loanReminderName: "Ad", loanReminderPayment: "Ödeme",
+        loanReminderPayDay: "Ödeme günü", loanReminderDaysBefore: "Önceden bildir",
+        loanReminderActive: "Aktif hatırlatıcılar", loanReminderDenied: "Ayarlardan bildirimleri etkinleştirin",
         rentVsBuy: "Kira/Satın Al", monthlyRent: "AYLIK KİRA", rentIncrease: "KİRA ARTIŞI %/yıl",
         homeAppreciation: "DEĞER ARTIŞI %/yıl", yearsCompare: "KARŞILAŞT. YILLAR",
         investReturn: "YATIRIM GETİRİSİ %", renting: "KİRALAMA", buying: "SATIN ALMA",
@@ -1179,6 +1219,10 @@ extension Loc {
         totalMonthly: "月供合计", pAndI: "本金和利息", pmi: "按揭保险",
         lastPaymentDate: "最后还款", extraPaymentLabel: "额外月供",
         scenario: "方案对比", saved: "节省", debtBalance: "剩余债务",
+        loanSetReminder: "还款提醒", loanReminderAdd: "添加",
+        loanReminderName: "名称", loanReminderPayment: "还款额",
+        loanReminderPayDay: "还款日", loanReminderDaysBefore: "提前提醒",
+        loanReminderActive: "活跃提醒", loanReminderDenied: "请在设置中开启通知",
         rentVsBuy: "租/买", monthlyRent: "月租金", rentIncrease: "租金涨幅 %/年",
         homeAppreciation: "房产增值 %/年", yearsCompare: "比较年限",
         investReturn: "投资回报 %/年", renting: "租房", buying: "购房",
