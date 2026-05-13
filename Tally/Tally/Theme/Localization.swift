@@ -295,6 +295,24 @@ struct Loc {
     let cryptoLoading: String
     let cryptoOffline: String
     let cryptoUpdated: String
+    let cryptoHigh: String
+    let cryptoLow: String
+    let cryptoMarketCap: String
+    let cryptoVolume: String
+    let cryptoMarket: String
+    let cryptoPortfolio: String
+    let portfolioEmpty: String
+    let portfolioAdd: String
+    let portfolioAddTitle: String
+    let portfolioInvested: String
+    let portfolioValue: String
+    let portfolioCoin: String
+    let portfolioAmount: String
+    let portfolioBuyPrice: String
+    let portfolioDate: String
+    let portfolioCost: String
+    let portfolioHoldings: String
+    let portfolioSelectCoin: String
 
     // Engineering category labels
     let engTime: String
@@ -399,6 +417,13 @@ extension Loc {
         navCrypto: "Crypto", cryptoConverter: "CONVERTER", cryptoAmount: "Amount",
         cryptoPrices: "PRICES", cryptoShowAll: "Show all", cryptoShowLess: "Show less",
         cryptoLoading: "Loading…", cryptoOffline: "Offline", cryptoUpdated: "Updated",
+        cryptoHigh: "High", cryptoLow: "Low", cryptoMarketCap: "Market Cap", cryptoVolume: "Volume 24h",
+        cryptoMarket: "Market", cryptoPortfolio: "Portfolio",
+        portfolioEmpty: "No holdings yet · Tap + to add", portfolioAdd: "Add Holding",
+        portfolioAddTitle: "Add Holding", portfolioInvested: "Invested", portfolioValue: "Value",
+        portfolioCoin: "Coin", portfolioAmount: "Amount", portfolioBuyPrice: "Buy Price",
+        portfolioDate: "Buy Date", portfolioCost: "Cost", portfolioHoldings: "Holdings",
+        portfolioSelectCoin: "Select Coin",
         engTime: "Time", engAcceleration: "Acceleration", engDensity: "Density",
         engPressure: "Pressure", engEnergy: "Energy & Work", engPower: "Power",
         engForce: "Force", engAngle: "Angle", engWireGauge: "Wire Gauge",
@@ -491,6 +516,13 @@ extension Loc {
         navCrypto: "Крипто", cryptoConverter: "КОНВЕРТЕР", cryptoAmount: "Количество",
         cryptoPrices: "ЦЕНЫ", cryptoShowAll: "Показать все", cryptoShowLess: "Свернуть",
         cryptoLoading: "Загрузка…", cryptoOffline: "Офлайн", cryptoUpdated: "Обновлено",
+        cryptoHigh: "Макс.", cryptoLow: "Мин.", cryptoMarketCap: "Рын. кап.", cryptoVolume: "Объём 24ч",
+        cryptoMarket: "Рынок", cryptoPortfolio: "Портфель",
+        portfolioEmpty: "Нет активов · Нажмите + для добавления", portfolioAdd: "Добавить",
+        portfolioAddTitle: "Добавить актив", portfolioInvested: "Вложено", portfolioValue: "Стоимость",
+        portfolioCoin: "Монета", portfolioAmount: "Количество", portfolioBuyPrice: "Цена покупки",
+        portfolioDate: "Дата покупки", portfolioCost: "Затраты", portfolioHoldings: "Активы",
+        portfolioSelectCoin: "Выберите монету",
         engTime: "Время", engAcceleration: "Ускорение", engDensity: "Плотность",
         engPressure: "Давление", engEnergy: "Энергия, работа", engPower: "Мощность",
         engForce: "Сила", engAngle: "Угловая мера", engWireGauge: "Калибр проводов",
@@ -583,6 +615,13 @@ extension Loc {
         navCrypto: "Krypto", cryptoConverter: "UMRECHNER", cryptoAmount: "Menge",
         cryptoPrices: "PREISE", cryptoShowAll: "Alle anzeigen", cryptoShowLess: "Weniger",
         cryptoLoading: "Laden…", cryptoOffline: "Offline", cryptoUpdated: "Aktualisiert",
+        cryptoHigh: "Hoch", cryptoLow: "Tief", cryptoMarketCap: "Marktk.", cryptoVolume: "Volumen 24h",
+        cryptoMarket: "Markt", cryptoPortfolio: "Portfolio",
+        portfolioEmpty: "Keine Positionen · + drücken", portfolioAdd: "Hinzufügen",
+        portfolioAddTitle: "Position hinzufügen", portfolioInvested: "Investiert", portfolioValue: "Wert",
+        portfolioCoin: "Münze", portfolioAmount: "Menge", portfolioBuyPrice: "Kaufpreis",
+        portfolioDate: "Kaufdatum", portfolioCost: "Kosten", portfolioHoldings: "Positionen",
+        portfolioSelectCoin: "Münze wählen",
         engTime: "Zeit", engAcceleration: "Beschleunigung", engDensity: "Dichte",
         engPressure: "Druck", engEnergy: "Energie & Arbeit", engPower: "Leistung",
         engForce: "Kraft", engAngle: "Winkel", engWireGauge: "Drahtquerschnitt",
@@ -675,6 +714,13 @@ extension Loc {
         navCrypto: "Cripto", cryptoConverter: "CONVERTIDOR", cryptoAmount: "Cantidad",
         cryptoPrices: "PRECIOS", cryptoShowAll: "Mostrar todo", cryptoShowLess: "Mostrar menos",
         cryptoLoading: "Cargando…", cryptoOffline: "Sin conexión", cryptoUpdated: "Actualizado",
+        cryptoHigh: "Máx.", cryptoLow: "Mín.", cryptoMarketCap: "Cap. Merc.", cryptoVolume: "Volumen 24h",
+        cryptoMarket: "Mercado", cryptoPortfolio: "Cartera",
+        portfolioEmpty: "Sin posiciones · Toca + para agregar", portfolioAdd: "Agregar",
+        portfolioAddTitle: "Agregar posición", portfolioInvested: "Invertido", portfolioValue: "Valor",
+        portfolioCoin: "Moneda", portfolioAmount: "Cantidad", portfolioBuyPrice: "Precio de compra",
+        portfolioDate: "Fecha de compra", portfolioCost: "Costo", portfolioHoldings: "Posiciones",
+        portfolioSelectCoin: "Seleccionar moneda",
         engTime: "Tiempo", engAcceleration: "Aceleración", engDensity: "Densidad",
         engPressure: "Presión", engEnergy: "Energía y trabajo", engPower: "Potencia",
         engForce: "Fuerza", engAngle: "Ángulo", engWireGauge: "Calibre de cable",
@@ -767,6 +813,13 @@ extension Loc {
         navCrypto: "Crypto", cryptoConverter: "CONVERTISSEUR", cryptoAmount: "Montant",
         cryptoPrices: "PRIX", cryptoShowAll: "Tout afficher", cryptoShowLess: "Réduire",
         cryptoLoading: "Chargement…", cryptoOffline: "Hors ligne", cryptoUpdated: "Mis à jour",
+        cryptoHigh: "Haut", cryptoLow: "Bas", cryptoMarketCap: "Cap. bours.", cryptoVolume: "Volume 24h",
+        cryptoMarket: "Marché", cryptoPortfolio: "Portefeuille",
+        portfolioEmpty: "Aucune position · Appuyer sur +", portfolioAdd: "Ajouter",
+        portfolioAddTitle: "Ajouter une position", portfolioInvested: "Investi", portfolioValue: "Valeur",
+        portfolioCoin: "Monnaie", portfolioAmount: "Quantité", portfolioBuyPrice: "Prix d'achat",
+        portfolioDate: "Date d'achat", portfolioCost: "Coût", portfolioHoldings: "Positions",
+        portfolioSelectCoin: "Choisir une monnaie",
         engTime: "Temps", engAcceleration: "Accélération", engDensity: "Densité",
         engPressure: "Pression", engEnergy: "Énergie et travail", engPower: "Puissance",
         engForce: "Force", engAngle: "Angle", engWireGauge: "Section de câble",
@@ -859,6 +912,13 @@ extension Loc {
         navCrypto: "Crypto", cryptoConverter: "CONVERTITORE", cryptoAmount: "Quantità",
         cryptoPrices: "PREZZI", cryptoShowAll: "Mostra tutto", cryptoShowLess: "Mostra meno",
         cryptoLoading: "Caricamento…", cryptoOffline: "Offline", cryptoUpdated: "Aggiornato",
+        cryptoHigh: "Max.", cryptoLow: "Min.", cryptoMarketCap: "Cap. Merc.", cryptoVolume: "Volume 24h",
+        cryptoMarket: "Mercato", cryptoPortfolio: "Portafoglio",
+        portfolioEmpty: "Nessuna posizione · Tocca +", portfolioAdd: "Aggiungi",
+        portfolioAddTitle: "Aggiungi posizione", portfolioInvested: "Investito", portfolioValue: "Valore",
+        portfolioCoin: "Moneta", portfolioAmount: "Quantità", portfolioBuyPrice: "Prezzo d'acquisto",
+        portfolioDate: "Data d'acquisto", portfolioCost: "Costo", portfolioHoldings: "Posizioni",
+        portfolioSelectCoin: "Seleziona moneta",
         engTime: "Tempo", engAcceleration: "Accelerazione", engDensity: "Densità",
         engPressure: "Pressione", engEnergy: "Energia e lavoro", engPower: "Potenza",
         engForce: "Forza", engAngle: "Angolo", engWireGauge: "Sezione cavo",
@@ -951,6 +1011,13 @@ extension Loc {
         navCrypto: "Cripto", cryptoConverter: "CONVERSOR", cryptoAmount: "Quantidade",
         cryptoPrices: "PREÇOS", cryptoShowAll: "Mostrar tudo", cryptoShowLess: "Mostrar menos",
         cryptoLoading: "Carregando…", cryptoOffline: "Offline", cryptoUpdated: "Atualizado",
+        cryptoHigh: "Máx.", cryptoLow: "Mín.", cryptoMarketCap: "Cap. Merc.", cryptoVolume: "Volume 24h",
+        cryptoMarket: "Mercado", cryptoPortfolio: "Carteira",
+        portfolioEmpty: "Sem posições · Toque em +", portfolioAdd: "Adicionar",
+        portfolioAddTitle: "Adicionar posição", portfolioInvested: "Investido", portfolioValue: "Valor",
+        portfolioCoin: "Moeda", portfolioAmount: "Quantidade", portfolioBuyPrice: "Preço de compra",
+        portfolioDate: "Data de compra", portfolioCost: "Custo", portfolioHoldings: "Posições",
+        portfolioSelectCoin: "Selecionar moeda",
         engTime: "Tempo", engAcceleration: "Aceleração", engDensity: "Densidade",
         engPressure: "Pressão", engEnergy: "Energia e trabalho", engPower: "Potência",
         engForce: "Força", engAngle: "Ângulo", engWireGauge: "Bitola de fio",
@@ -1043,6 +1110,13 @@ extension Loc {
         navCrypto: "Kripto", cryptoConverter: "DÖNÜŞTÜRÜCÜ", cryptoAmount: "Miktar",
         cryptoPrices: "FİYATLAR", cryptoShowAll: "Tümünü göster", cryptoShowLess: "Daha az",
         cryptoLoading: "Yükleniyor…", cryptoOffline: "Çevrimdışı", cryptoUpdated: "Güncellendi",
+        cryptoHigh: "En Yük.", cryptoLow: "En Düş.", cryptoMarketCap: "Piy. Değ.", cryptoVolume: "Hacim 24s",
+        cryptoMarket: "Piyasa", cryptoPortfolio: "Portföy",
+        portfolioEmpty: "Pozisyon yok · + ile ekleyin", portfolioAdd: "Ekle",
+        portfolioAddTitle: "Pozisyon ekle", portfolioInvested: "Yatırılan", portfolioValue: "Değer",
+        portfolioCoin: "Coin", portfolioAmount: "Miktar", portfolioBuyPrice: "Alım fiyatı",
+        portfolioDate: "Alım tarihi", portfolioCost: "Maliyet", portfolioHoldings: "Pozisyonlar",
+        portfolioSelectCoin: "Coin seç",
         engTime: "Zaman", engAcceleration: "İvme", engDensity: "Yoğunluk",
         engPressure: "Basınç", engEnergy: "Enerji ve iş", engPower: "Güç",
         engForce: "Kuvvet", engAngle: "Açı", engWireGauge: "Tel kalınlığı",
@@ -1135,6 +1209,13 @@ extension Loc {
         navCrypto: "加密货币", cryptoConverter: "转换器", cryptoAmount: "数量",
         cryptoPrices: "价格", cryptoShowAll: "显示全部", cryptoShowLess: "收起",
         cryptoLoading: "加载中…", cryptoOffline: "离线", cryptoUpdated: "已更新",
+        cryptoHigh: "最高", cryptoLow: "最低", cryptoMarketCap: "市值", cryptoVolume: "24h量",
+        cryptoMarket: "市场", cryptoPortfolio: "投资组合",
+        portfolioEmpty: "暂无持仓 · 点击+添加", portfolioAdd: "添加",
+        portfolioAddTitle: "添加持仓", portfolioInvested: "已投入", portfolioValue: "市值",
+        portfolioCoin: "币种", portfolioAmount: "数量", portfolioBuyPrice: "买入价格",
+        portfolioDate: "买入日期", portfolioCost: "成本", portfolioHoldings: "持仓",
+        portfolioSelectCoin: "选择币种",
         engTime: "时间", engAcceleration: "加速度", engDensity: "密度",
         engPressure: "压力", engEnergy: "能量和功", engPower: "功率",
         engForce: "力", engAngle: "角度", engWireGauge: "线径",

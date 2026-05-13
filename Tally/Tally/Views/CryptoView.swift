@@ -4,23 +4,42 @@ struct CryptoView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
     @State private var service = CryptoService()
+    @State private var portfolioStore = PortfolioStore()
+    @State private var cryptoTab = 0       // 0 = Market, 1 = Portfolio
     @State private var amount = "1"
     @State private var selectedCrypto = Crypto.all[0]
     @State private var showAll = false
+    @State private var detailCrypto: Crypto? = nil
 
-    private var numericAmount: Double {
-        Double(amount) ?? 1
-    }
+    private var numericAmount: Double { Double(amount) ?? 1 }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 14) {
-                converterCard
-                statusBar
-                priceList
+        VStack(spacing: 0) {
+            // Tab picker
+            Picker("", selection: $cryptoTab) {
+                Text(L.cryptoMarket).tag(0)
+                Text(L.cryptoPortfolio).tag(1)
             }
+            .pickerStyle(.segmented)
             .padding(.horizontal, 16)
-            .padding(.bottom, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
+
+            if cryptoTab == 0 {
+                ScrollView {
+                    VStack(spacing: 14) {
+                        converterCard
+                        statusBar
+                        priceList
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 20)
+                }
+            } else {
+                PortfolioView(store: portfolioStore, service: service)
+                    .environment(\.tokens, T)
+                    .environment(\.loc, L)
+            }
         }
         .background { TallyBackground(T: T, icons: [
             "bitcoinsign.circle", "chart.line.uptrend.xyaxis",
@@ -30,6 +49,10 @@ struct CryptoView: View {
         .navigationTitle(L.navCrypto)
         .navigationBarTitleDisplayMode(.large)
         .task { await service.fetchPrices() }
+        .sheet(item: $detailCrypto) { crypto in
+            CryptoDetailView(crypto: crypto, priceData: service.priceFor(crypto.id))
+                .environment(\.tokens, T)
+        }
     }
 
     // MARK: - Converter
@@ -168,9 +191,7 @@ struct CryptoView: View {
                     let isUp = price.change24h >= 0
 
                     Button {
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            selectedCrypto = crypto
-                        }
+                        detailCrypto = crypto
                     } label: {
                         HStack(spacing: 12) {
                             Text(crypto.icon)
@@ -204,7 +225,7 @@ struct CryptoView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
-                        .background(selectedCrypto.id == crypto.id ? T.accentSoft : .clear)
+                        .background(Color.clear)
                     }
                     .buttonStyle(.plain)
 
