@@ -1,4 +1,17 @@
 import SwiftUI
+import UniformTypeIdentifiers
+
+struct CSVFile: Transferable {
+    let content: String
+    let filename: String
+
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(exportedContentType: .commaSeparatedText) { file in
+            Data(file.content.utf8)
+        }
+        .suggestedFileName { $0.filename }
+    }
+}
 
 struct FinanceView: View {
     @Environment(\.tokens) private var T
@@ -532,7 +545,7 @@ struct FinanceView: View {
 
                 // Amortization schedule (reuse existing)
                 if termMonths <= 600 {
-                    loanSchedule(principal: loan, monthlyRate: mr, payment: pAndIPayment, totalMonths: termMonths, startDate: Date(), paymentType: mortgagePaymentType)
+                    loanSchedule(principal: loan, monthlyRate: mr, payment: pAndIPayment, totalMonths: termMonths, startDate: Date(), paymentType: mortgagePaymentType, exportFilename: "mortgage_schedule")
                 }
             }
         }
@@ -1341,8 +1354,9 @@ struct FinanceView: View {
         return groups
     }
 
-    private func loanSchedule(principal: Double, monthlyRate: Double, payment: Double, totalMonths: Int, startDate: Date, paymentType: String = "annuity") -> some View {
+    private func loanSchedule(principal: Double, monthlyRate: Double, payment: Double, totalMonths: Int, startDate: Date, paymentType: String = "annuity", exportFilename: String = "loan_schedule") -> some View {
         let groups = buildSchedule(principal: principal, monthlyRate: monthlyRate, payment: payment, totalMonths: totalMonths, startDate: startDate, paymentType: paymentType)
+        let csvFile = CSVFile(content: buildCSV(groups: groups), filename: "\(exportFilename).csv")
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -1352,6 +1366,15 @@ struct FinanceView: View {
                     .foregroundStyle(T.textMuted)
 
                 Spacer()
+
+                ShareLink(
+                    item: csvFile,
+                    preview: SharePreview("\(exportFilename).csv", image: Image(systemName: "tablecells"))
+                ) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(T.accent)
+                }
 
                 Picker("", selection: $loanViewMode) {
                     Text(L.monthly).tag("monthly")
@@ -1651,6 +1674,18 @@ struct FinanceView: View {
             Spacer()
             Text(value).font(.custom("JetBrainsMono-Medium", size: 14))
         }
+    }
+
+    private func buildCSV(groups: [YearGroup]) -> String {
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd"
+        var lines = ["#,Date,Payment,Principal,Interest,Balance"]
+        for group in groups {
+            for row in group.months {
+                lines.append("\(row.month),\(df.string(from: row.date)),\(String(format: "%.2f", row.payment)),\(String(format: "%.2f", row.principal)),\(String(format: "%.2f", row.interest)),\(String(format: "%.2f", row.remaining))")
+            }
+        }
+        return lines.joined(separator: "\n")
     }
 
     private func fmtCurrency(_ value: Double) -> String {
