@@ -131,10 +131,17 @@ class CryptoService {
 
     private let cacheKey = "tally_crypto_prices"
     private let cacheTimestampKey = "tally_crypto_timestamp"
+    private static let priceTTL: TimeInterval = 5 * 60  // 5 minutes
+
+    var isCacheValid: Bool {
+        guard let lastUpdated, !prices.isEmpty else { return false }
+        return -lastUpdated.timeIntervalSinceNow < Self.priceTTL
+    }
 
     init() { loadCachedPrices() }
 
     func fetchPrices() async {
+        guard !isCacheValid else { return }
         isLoading = true
         defer { isLoading = false }
 
@@ -222,6 +229,11 @@ class CryptoService {
         } catch { return nil }
     }
 
+    func forceRefresh() async {
+        lastUpdated = nil
+        await fetchPrices()
+    }
+
     // MARK: - Helpers
 
     func priceFor(_ id: String) -> CryptoPrice {
@@ -259,7 +271,6 @@ class CryptoService {
                                      marketCap: v["cap"] ?? 0, volume24h: v["vol"] ?? 0)
         }
         lastUpdated = UserDefaults.standard.object(forKey: cacheTimestampKey) as? Date
-        isOffline = true
     }
 
     private func loadFallbackPrices() {

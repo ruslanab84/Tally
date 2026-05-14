@@ -24,6 +24,16 @@ enum ChartPeriod: String, CaseIterable {
         case .tenYears:    return 3650
         }
     }
+
+    var cacheTTL: TimeInterval {
+        switch self {
+        case .day:                    return 5 * 60       // 5 min
+        case .week:                   return 30 * 60      // 30 min
+        case .month:                  return 2 * 3600     // 2 h
+        case .threeMonths, .sixMonths: return 6 * 3600    // 6 h
+        case .year, .fiveYears, .tenYears: return 24 * 3600  // 24 h
+        }
+    }
 }
 
 // MARK: - Chart Point
@@ -32,6 +42,16 @@ private struct ChartPoint {
     let date: Date
     let price: Double
 }
+
+// MARK: - Chart Cache
+
+private struct ChartCacheEntry {
+    let points: [ChartPoint]
+    let fetchedAt: Date
+}
+
+// Lives for the entire app session — survives sheet dismiss/re-open
+private var chartMemoryCache: [String: ChartCacheEntry] = [:]
 
 // MARK: - Detail View
 
@@ -422,28 +442,75 @@ struct CryptoDetailView: View {
 
     // MARK: - Data Loading
 
+    private func chartCacheKey() -> String {
+        "tally_chart_v1_\(crypto.id)_\(selectedPeriod.rawValue)"
+    }
+
     private func loadChart() async {
+        let key = chartCacheKey()
+        let ttl = selectedPeriod.cacheTTL
+
+        // 1. Memory cache hit — instant, no loading indicator
+        if let entry = chartMemoryCache[key],
+           -entry.fetchedAt.timeIntervalSinceNow < ttl {
+            chartData = entry.points
+            isFallback = false
+            return
+        }
+
+        // 2. Disk cache hit — fast, no network needed
+        if let entry = loadChartFromDisk(key: key),
+           -entry.fetchedAt.timeIntervalSinceNow < ttl {
+            chartData = entry.points
+            chartMemoryCache[key] = entry
+            isFallback = false
+            return
+        }
+
+        // 3. Network fetch
         isLoading = true
         loadError = false
         isFallback = false
         chartData = []
         defer { isLoading = false }
 
-        // Try Binance first (free, no key, 1200 req/min)
+        var fetched: [ChartPoint]?
+
         if let symbol = crypto.binanceSymbol,
            let points = await fetchBinanceKlines(symbol: symbol) {
-            chartData = points
-            return
+            fetched = points
+        } else if let points = await fetchCoinGeckoChart() {
+            fetched = points
         }
 
-        // Fallback: CoinGecko (rate-limited but covers all coins)
-        if let points = await fetchCoinGeckoChart() {
+        if let points = fetched {
             chartData = points
-            return
+            let entry = ChartCacheEntry(points: points, fetchedAt: Date())
+            chartMemoryCache[key] = entry
+            saveChartToDisk(key: key, entry: entry)
+        } else {
+            useFallback()
         }
+    }
 
-        // Last resort: demo curve from known price + 24h change
-        useFallback()
+    private func saveChartToDisk(key: String, entry: ChartCacheEntry) {
+        let raw = entry.points.map { [$0.date.timeIntervalSince1970, $0.price] }
+        guard let data = try? JSONEncoder().encode(raw) else { return }
+        UserDefaults.standard.set(data, forKey: key)
+        UserDefaults.standard.set(entry.fetchedAt, forKey: key + "_ts")
+    }
+
+    private func loadChartFromDisk(key: String) -> ChartCacheEntry? {
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let ts   = UserDefaults.standard.object(forKey: key + "_ts") as? Date,
+              let raw  = try? JSONDecoder().decode([[Double]].self, from: data)
+        else { return nil }
+        let points = raw.compactMap { arr -> ChartPoint? in
+            guard arr.count == 2 else { return nil }
+            return ChartPoint(date: Date(timeIntervalSince1970: arr[0]), price: arr[1])
+        }
+        guard !points.isEmpty else { return nil }
+        return ChartCacheEntry(points: points, fetchedAt: ts)
     }
 
     private func fetchBinanceKlines(symbol: String) async -> [ChartPoint]? {

@@ -10,6 +10,8 @@ struct FinanceView: View {
     @State private var loanRate = "6.5"
     @State private var loanTerm = "30"
     @State private var loanTermUnit = "years"
+    @State private var loanStartDate = Date()
+    @State private var loanPaymentType = "annuity"
 
     // Deposit
     @State private var depositAmount = "10000"
@@ -113,22 +115,47 @@ struct FinanceView: View {
         let months = loanTermUnit == "years" ? termVal * 12 : termVal
         let mr = annual / 12 / 100
 
-        let payment: Double
+        let payment: Double      // annuity: fixed; diff: first (max) payment
+        let diffLastPayment: Double  // diff only: last (min) payment
         let totalPaid: Double
         let totalInterest: Double
 
-        if principal > 0 && mr > 0 && months > 0 {
-            let f = pow(1 + mr, months)
-            payment = principal * (mr * f) / (f - 1)
-            totalPaid = payment * months
-            totalInterest = totalPaid - principal
-        } else if principal > 0 && months > 0 {
-            payment = principal / months
-            totalPaid = principal
-            totalInterest = 0
+        if loanPaymentType == "diff" {
+            if principal > 0 && months > 0 {
+                let fixedPrin = principal / months
+                payment = fixedPrin + principal * mr
+                diffLastPayment = fixedPrin * (1 + mr)
+                totalInterest = principal * mr * (months + 1) / 2
+                totalPaid = principal + totalInterest
+            } else {
+                payment = 0; diffLastPayment = 0; totalPaid = 0; totalInterest = 0
+            }
         } else {
-            payment = 0; totalPaid = 0; totalInterest = 0
+            if principal > 0 && mr > 0 && months > 0 {
+                let f = pow(1 + mr, months)
+                payment = principal * (mr * f) / (f - 1)
+                totalPaid = payment * months
+                totalInterest = totalPaid - principal
+            } else if principal > 0 && months > 0 {
+                payment = principal / months
+                totalPaid = principal
+                totalInterest = 0
+            } else {
+                payment = 0; totalPaid = 0; totalInterest = 0
+            }
+            diffLastPayment = payment
         }
+
+        let cal = Calendar.current
+        let firstPaymentDate = cal.date(byAdding: .month, value: 1, to: loanStartDate) ?? loanStartDate
+        let payoffDate = cal.date(byAdding: .month, value: Int(months), to: loanStartDate) ?? loanStartDate
+        let dateFmt: DateFormatter = {
+            let f = DateFormatter()
+            f.dateStyle = .medium
+            f.timeStyle = .none
+            return f
+        }()
+        let firstPaymentDay = cal.component(.day, from: firstPaymentDate)
 
         return VStack(spacing: 14) {
             financeField(L.loanAmount, prefix: "$", text: $loanAmount, focus: .loanAmt)
@@ -138,9 +165,44 @@ struct FinanceView: View {
                 termField(text: $loanTerm, unit: $loanTermUnit, focus: .loanTerm)
             }
 
+            DatePicker(L.loanStartDate, selection: $loanStartDate, displayedComponents: .date)
+                .font(.custom("JetBrainsMono-Regular", size: 14))
+                .foregroundStyle(T.text)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(T.surface)
+                .clipShape(RoundedRectangle(cornerRadius: TallyRadius.medium))
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L.paymentType)
+                    .font(.custom("JetBrainsMono-SemiBold", size: 11))
+                    .tracking(0.6)
+                    .foregroundStyle(T.textMuted)
+                HStack(spacing: 6) {
+                    ForEach([("annuity", L.annuity), ("diff", L.diffPayment)], id: \.0) { key, label in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.15)) { loanPaymentType = key }
+                        } label: {
+                            Text(label)
+                                .font(.custom("JetBrainsMono-SemiBold", size: 12))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(loanPaymentType == key ? T.accent : .clear)
+                                .foregroundStyle(loanPaymentType == key ? .white : T.text)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(loanPaymentType == key ? T.accent : T.border, lineWidth: 1))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .padding(14)
+            .background(T.surface)
+            .clipShape(RoundedRectangle(cornerRadius: TallyRadius.large))
+
             if payment > 0 {
                 VStack(spacing: 0) {
-                    Text(L.monthlyPayment)
+                    Text(loanPaymentType == "diff" ? L.diffPayment : L.monthlyPayment)
                         .font(.custom("JetBrainsMono-SemiBold", size: 11))
                         .tracking(0.6)
                         .opacity(0.85)
@@ -152,6 +214,12 @@ struct FinanceView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
 
+                    if loanPaymentType == "diff" {
+                        Text("→ \(fmtCurrency(diffLastPayment))")
+                            .font(.custom("JetBrainsMono-Regular", size: 13))
+                            .opacity(0.7)
+                    }
+
                     Rectangle().fill(.white.opacity(0.3)).frame(height: 1)
                         .padding(.vertical, 14)
 
@@ -160,6 +228,10 @@ struct FinanceView: View {
                     summaryRow(L.totalInterest, fmtCurrency(totalInterest))
                         .padding(.bottom, 6)
                     summaryRow(L.totalPaid, fmtCurrency(totalPaid))
+                        .padding(.bottom, 6)
+                    summaryRow(L.loanFirstPayment, dateFmt.string(from: firstPaymentDate))
+                        .padding(.bottom, 6)
+                    summaryRow(L.loanPayoffDate, dateFmt.string(from: payoffDate))
 
                     if totalPaid > 0 {
                         let principalFrac = CGFloat(principal / totalPaid)
@@ -228,12 +300,12 @@ struct FinanceView: View {
 
                 // Breakdown
                 if months > 0 && months <= 600 {
-                    loanSchedule(principal: principal, monthlyRate: mr, payment: payment, totalMonths: Int(months))
+                    loanSchedule(principal: principal, monthlyRate: mr, payment: payment, totalMonths: Int(months), startDate: loanStartDate, paymentType: loanPaymentType)
                 }
             }
         }
         .sheet(isPresented: $showLoanReminders) {
-            LoanRemindersView(store: loanReminderStore, suggestedPayment: payment)
+            LoanRemindersView(store: loanReminderStore, suggestedPayment: payment, suggestedPaymentDay: firstPaymentDay)
                 .environment(\.tokens, T)
                 .environment(\.loc, L)
         }
@@ -460,7 +532,7 @@ struct FinanceView: View {
 
                 // Amortization schedule (reuse existing)
                 if termMonths <= 600 {
-                    loanSchedule(principal: loan, monthlyRate: mr, payment: pAndIPayment, totalMonths: termMonths)
+                    loanSchedule(principal: loan, monthlyRate: mr, payment: pAndIPayment, totalMonths: termMonths, startDate: Date(), paymentType: mortgagePaymentType)
                 }
             }
         }
@@ -1217,6 +1289,8 @@ struct FinanceView: View {
     private struct MonthRow: Identifiable {
         let id: Int
         let month: Int
+        let date: Date
+        let payment: Double   // actual total payment this month
         let interest: Double
         let principal: Double
         let remaining: Double
@@ -1225,21 +1299,31 @@ struct FinanceView: View {
     private struct YearGroup: Identifiable {
         let id: Int
         let year: Int
+        let calendarYear: Int
         let totalInterest: Double
         let totalPrincipal: Double
         let remaining: Double
         let months: [MonthRow]
     }
 
-    private func buildSchedule(principal: Double, monthlyRate: Double, payment: Double, totalMonths: Int) -> [YearGroup] {
+    private func buildSchedule(principal: Double, monthlyRate: Double, payment: Double, totalMonths: Int, startDate: Date, paymentType: String = "annuity") -> [YearGroup] {
+        let cal = Calendar.current
         var balance = principal
         var allMonths: [MonthRow] = []
+        let fixedPrin = paymentType == "diff" ? principal / Double(totalMonths) : 0
 
         for m in 1...totalMonths {
             let intPart = balance * monthlyRate
-            let prinPart = min(payment - intPart, balance)
+            let prinPart: Double
+            if paymentType == "diff" {
+                prinPart = min(fixedPrin, balance)
+            } else {
+                prinPart = min(payment - intPart, balance)
+            }
+            let actualPayment = intPart + prinPart
             balance = max(0, balance - prinPart)
-            allMonths.append(MonthRow(id: m, month: m, interest: intPart, principal: prinPart, remaining: balance))
+            let date = cal.date(byAdding: .month, value: m, to: startDate) ?? startDate
+            allMonths.append(MonthRow(id: m, month: m, date: date, payment: actualPayment, interest: intPart, principal: prinPart, remaining: balance))
         }
 
         let years = min(totalMonths / 12 + (totalMonths % 12 > 0 ? 1 : 0), 50)
@@ -1251,13 +1335,14 @@ struct FinanceView: View {
             let slice = Array(allMonths[start..<end])
             let tInt = slice.reduce(0) { $0 + $1.interest }
             let tPrin = slice.reduce(0) { $0 + $1.principal }
-            groups.append(YearGroup(id: y, year: y, totalInterest: tInt, totalPrincipal: tPrin, remaining: slice.last?.remaining ?? 0, months: slice))
+            let calYear = cal.component(.year, from: slice.first?.date ?? startDate)
+            groups.append(YearGroup(id: y, year: y, calendarYear: calYear, totalInterest: tInt, totalPrincipal: tPrin, remaining: slice.last?.remaining ?? 0, months: slice))
         }
         return groups
     }
 
-    private func loanSchedule(principal: Double, monthlyRate: Double, payment: Double, totalMonths: Int) -> some View {
-        let groups = buildSchedule(principal: principal, monthlyRate: monthlyRate, payment: payment, totalMonths: totalMonths)
+    private func loanSchedule(principal: Double, monthlyRate: Double, payment: Double, totalMonths: Int, startDate: Date, paymentType: String = "annuity") -> some View {
+        let groups = buildSchedule(principal: principal, monthlyRate: monthlyRate, payment: payment, totalMonths: totalMonths, startDate: startDate, paymentType: paymentType)
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -1300,10 +1385,15 @@ struct FinanceView: View {
 
     private func yearRow(_ group: YearGroup) -> some View {
         HStack {
-            Text("\(L.year) \(group.year)")
-                .font(.custom("JetBrainsMono-SemiBold", size: 13))
-                .foregroundStyle(T.text)
-                .frame(width: 56, alignment: .leading)
+            VStack(alignment: .leading, spacing: 1) {
+                Text("\(L.year) \(group.year)")
+                    .font(.custom("JetBrainsMono-SemiBold", size: 13))
+                    .foregroundStyle(T.text)
+                Text("\(group.calendarYear)")
+                    .font(.custom("JetBrainsMono-Regular", size: 10))
+                    .foregroundStyle(T.textMuted)
+            }
+            .frame(width: 60, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text("\(L.interest): \(fmtShort(group.totalInterest))")
@@ -1332,9 +1422,14 @@ struct FinanceView: View {
                 }
             } label: {
                 HStack {
-                    Text("\(L.year) \(group.year)")
-                        .font(.custom("JetBrainsMono-SemiBold", size: 14))
-                        .foregroundStyle(T.text)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("\(L.year) \(group.year)")
+                            .font(.custom("JetBrainsMono-SemiBold", size: 14))
+                            .foregroundStyle(T.text)
+                        Text("\(group.calendarYear)")
+                            .font(.custom("JetBrainsMono-Regular", size: 11))
+                            .foregroundStyle(T.textMuted)
+                    }
 
                     Spacer()
 
@@ -1359,11 +1454,11 @@ struct FinanceView: View {
                 VStack(spacing: 0) {
                     // Header
                     HStack(spacing: 0) {
-                        Text("#")
-                            .frame(width: 32, alignment: .leading)
-                        Text(L.interest)
+                        Text("DATE")
+                            .frame(width: 48, alignment: .leading)
+                        Text("PMT")
                             .frame(maxWidth: .infinity, alignment: .trailing)
-                        Text(L.principal)
+                        Text(L.interest)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                         Text(L.balance)
                             .frame(maxWidth: .infinity, alignment: .trailing)
@@ -1373,20 +1468,26 @@ struct FinanceView: View {
                     .padding(.horizontal, 14)
                     .padding(.vertical, 6)
 
+                    let monthFmt: DateFormatter = {
+                        let f = DateFormatter()
+                        f.dateFormat = "MMM yy"
+                        return f
+                    }()
+
                     ForEach(group.months) { row in
                         HStack(spacing: 0) {
-                            Text("\(row.month)")
-                                .frame(width: 32, alignment: .leading)
+                            Text(monthFmt.string(from: row.date))
+                                .frame(width: 48, alignment: .leading)
                                 .foregroundStyle(T.textMuted)
+                            Text(fmtShort(row.payment))
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .foregroundStyle(T.text)
                             Text(fmtShort(row.interest))
                                 .frame(maxWidth: .infinity, alignment: .trailing)
                                 .foregroundStyle(T.red)
-                            Text(fmtShort(row.principal))
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                                .foregroundStyle(T.success)
                             Text(fmtShort(row.remaining))
                                 .frame(maxWidth: .infinity, alignment: .trailing)
-                                .foregroundStyle(T.text)
+                                .foregroundStyle(T.textMuted)
                         }
                         .font(.custom("JetBrainsMono-Medium", size: 11))
                         .padding(.horizontal, 14)

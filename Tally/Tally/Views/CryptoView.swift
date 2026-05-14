@@ -35,6 +35,9 @@ struct CryptoView: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 20)
                 }
+                .refreshable {
+                    await service.forceRefresh()
+                }
             } else {
                 PortfolioView(store: portfolioStore, service: service)
                     .environment(\.tokens, T)

@@ -210,6 +210,9 @@ struct Loc {
     let loanReminderDaysBefore: String
     let loanReminderActive: String
     let loanReminderDenied: String
+    let loanStartDate: String
+    let loanFirstPayment: String
+    let loanPayoffDate: String
 
     // Rent vs Buy
     let rentVsBuy: String
@@ -322,6 +325,33 @@ struct Loc {
     let portfolioHoldings: String
     let portfolioSelectCoin: String
 
+    // Inflation
+    let tileInflation: String
+    let tileInflationSub: String
+    let navInflation: String
+    let inflationAmount: String
+    let inflationFromYear: String
+    let inflationToYear: String
+    let inflationResult: String
+    let inflationTotal: String
+    let inflationAnnual: String
+    let inflationPeriod: String
+    let inflationPower: String
+    let inflationPresets: String
+    let inflationSource: String
+
+    // VAT / Tax
+    let tileVAT: String
+    let tileVATSub: String
+    let navVAT: String
+    let vatExcl: String
+    let vatIncl: String
+    let vatRate: String
+    let vatBase: String
+    let vatTax: String
+    let vatTotal: String
+    let vatComparison: String
+
     // Engineering category labels
     let engTime: String
     let engAcceleration: String
@@ -399,6 +429,7 @@ extension Loc {
         loanReminderName: "Name", loanReminderPayment: "Payment",
         loanReminderPayDay: "Payment Day", loanReminderDaysBefore: "Notify Before",
         loanReminderActive: "Active Reminders", loanReminderDenied: "Enable notifications in Settings",
+        loanStartDate: "Start Date", loanFirstPayment: "First Payment", loanPayoffDate: "Payoff Date",
         rentVsBuy: "Rent/Buy", monthlyRent: "MONTHLY RENT", rentIncrease: "RENT INCREASE %/yr",
         homeAppreciation: "HOME APPRECIATION %/yr", yearsCompare: "YEARS TO COMPARE",
         investReturn: "INVEST RETURN %/yr", renting: "RENTING", buying: "BUYING",
@@ -436,6 +467,17 @@ extension Loc {
         portfolioCoin: "Coin", portfolioAmount: "Amount", portfolioBuyPrice: "Buy Price",
         portfolioDate: "Buy Date", portfolioCost: "Cost", portfolioHoldings: "Holdings",
         portfolioSelectCoin: "Select Coin",
+        tileInflation: "Inflation", tileInflationSub: "CPI calculator",
+        navInflation: "Inflation", inflationAmount: "AMOUNT",
+        inflationFromYear: "FROM", inflationToYear: "TO",
+        inflationResult: "ADJUSTED VALUE", inflationTotal: "total",
+        inflationAnnual: "per year", inflationPeriod: "period",
+        inflationPower: "PURCHASING POWER", inflationPresets: "QUICK PRESETS",
+        inflationSource: "US CPI-U · Bureau of Labor Statistics",
+        tileVAT: "VAT", tileVATSub: "Tax calculator",
+        navVAT: "VAT / Tax", vatExcl: "Excl. VAT", vatIncl: "Incl. VAT",
+        vatRate: "VAT RATE", vatBase: "Base price", vatTax: "Tax",
+        vatTotal: "Total", vatComparison: "RATE COMPARISON",
         engTime: "Time", engAcceleration: "Acceleration", engDensity: "Density",
         engPressure: "Pressure", engEnergy: "Energy & Work", engPower: "Power",
         engForce: "Force", engAngle: "Angle", engWireGauge: "Wire Gauge",
@@ -502,6 +544,7 @@ extension Loc {
         loanReminderName: "Название", loanReminderPayment: "Платёж",
         loanReminderPayDay: "День оплаты", loanReminderDaysBefore: "Уведомить за",
         loanReminderActive: "Активные", loanReminderDenied: "Включите уведомления в Настройках",
+        loanStartDate: "Дата начала", loanFirstPayment: "Первый платёж", loanPayoffDate: "Дата погашения",
         rentVsBuy: "Аренда/Покупка", monthlyRent: "ЕЖЕМЕС. АРЕНДА", rentIncrease: "РОСТ АРЕНДЫ %/год",
         homeAppreciation: "РОСТ СТОИМОСТИ %/год", yearsCompare: "ЛЕТ ДЛЯ СРАВНЕНИЯ",
         investReturn: "ДОХОДНОСТЬ %/год", renting: "АРЕНДА", buying: "ПОКУПКА",
@@ -539,6 +582,17 @@ extension Loc {
         portfolioCoin: "Монета", portfolioAmount: "Количество", portfolioBuyPrice: "Цена покупки",
         portfolioDate: "Дата покупки", portfolioCost: "Затраты", portfolioHoldings: "Активы",
         portfolioSelectCoin: "Выберите монету",
+        tileInflation: "Инфляция", tileInflationSub: "Калькулятор ИПЦ",
+        navInflation: "Инфляция", inflationAmount: "СУММА",
+        inflationFromYear: "ОТ", inflationToYear: "ДО",
+        inflationResult: "СКОРР. СТОИМОСТЬ", inflationTotal: "итого",
+        inflationAnnual: "в год", inflationPeriod: "период",
+        inflationPower: "ПОКУПАТЕЛЬНАЯ СИЛА", inflationPresets: "БЫСТРЫЙ ВЫБОР",
+        inflationSource: "US CPI-U · Бюро статистики труда",
+        tileVAT: "НДС", tileVATSub: "Калькулятор налогов",
+        navVAT: "НДС / Налоги", vatExcl: "Без НДС", vatIncl: "С НДС",
+        vatRate: "СТАВКА НДС", vatBase: "Цена без НДС", vatTax: "НДС",
+        vatTotal: "Итого с НДС", vatComparison: "СРАВНЕНИЕ СТАВОК",
         engTime: "Время", engAcceleration: "Ускорение", engDensity: "Плотность",
         engPressure: "Давление", engEnergy: "Энергия, работа", engPower: "Мощность",
         engForce: "Сила", engAngle: "Угловая мера", engWireGauge: "Калибр проводов",
@@ -605,6 +659,7 @@ extension Loc {
         loanReminderName: "Name", loanReminderPayment: "Zahlung",
         loanReminderPayDay: "Zahltag", loanReminderDaysBefore: "Erinnern vor",
         loanReminderActive: "Aktive Erinnerungen", loanReminderDenied: "Benachrichtigungen in Einstellungen aktivieren",
+        loanStartDate: "Startdatum", loanFirstPayment: "Erste Rate", loanPayoffDate: "Kreditende",
         rentVsBuy: "Miete/Kauf", monthlyRent: "MONATL. MIETE", rentIncrease: "MIETERHÖHUNG %/J",
         homeAppreciation: "WERTSTEIGERUNG %/J", yearsCompare: "VERGLEICHSJAHRE",
         investReturn: "ANLAGERENDITE %/J", renting: "MIETEN", buying: "KAUFEN",
@@ -642,6 +697,17 @@ extension Loc {
         portfolioCoin: "Münze", portfolioAmount: "Menge", portfolioBuyPrice: "Kaufpreis",
         portfolioDate: "Kaufdatum", portfolioCost: "Kosten", portfolioHoldings: "Positionen",
         portfolioSelectCoin: "Münze wählen",
+        tileInflation: "Inflation", tileInflationSub: "VPI-Rechner",
+        navInflation: "Inflation", inflationAmount: "BETRAG",
+        inflationFromYear: "VON", inflationToYear: "BIS",
+        inflationResult: "KAUF WERT", inflationTotal: "gesamt",
+        inflationAnnual: "pro Jahr", inflationPeriod: "Zeitraum",
+        inflationPower: "KAUFKRAFT", inflationPresets: "SCHNELLAUSWAHL",
+        inflationSource: "US CPI-U · Bureau of Labor Statistics",
+        tileVAT: "MwSt.", tileVATSub: "Steuerrechner",
+        navVAT: "MwSt. / Steuer", vatExcl: "Netto", vatIncl: "Brutto",
+        vatRate: "STEUERSATZ", vatBase: "Nettobetrag", vatTax: "MwSt.",
+        vatTotal: "Brutto", vatComparison: "SÄTZE VERGLEICH",
         engTime: "Zeit", engAcceleration: "Beschleunigung", engDensity: "Dichte",
         engPressure: "Druck", engEnergy: "Energie & Arbeit", engPower: "Leistung",
         engForce: "Kraft", engAngle: "Winkel", engWireGauge: "Drahtquerschnitt",
@@ -708,6 +774,7 @@ extension Loc {
         loanReminderName: "Nombre", loanReminderPayment: "Pago",
         loanReminderPayDay: "Día de pago", loanReminderDaysBefore: "Notificar antes de",
         loanReminderActive: "Recordatorios activos", loanReminderDenied: "Activar notificaciones en Ajustes",
+        loanStartDate: "Fecha inicio", loanFirstPayment: "Primer pago", loanPayoffDate: "Fecha fin",
         rentVsBuy: "Alq./Compra", monthlyRent: "RENTA MENSUAL", rentIncrease: "AUMENTO RENTA %/a",
         homeAppreciation: "APRECIACIÓN INMUEBLE %", yearsCompare: "AÑOS A COMPARAR",
         investReturn: "RENTAB. INVERSIÓN %", renting: "ALQUILAR", buying: "COMPRAR",
@@ -745,6 +812,17 @@ extension Loc {
         portfolioCoin: "Moneda", portfolioAmount: "Cantidad", portfolioBuyPrice: "Precio de compra",
         portfolioDate: "Fecha de compra", portfolioCost: "Costo", portfolioHoldings: "Posiciones",
         portfolioSelectCoin: "Seleccionar moneda",
+        tileInflation: "Inflación", tileInflationSub: "Calculadora IPC",
+        navInflation: "Inflación", inflationAmount: "MONTO",
+        inflationFromYear: "DESDE", inflationToYear: "HASTA",
+        inflationResult: "VALOR AJUSTADO", inflationTotal: "total",
+        inflationAnnual: "por año", inflationPeriod: "período",
+        inflationPower: "PODER ADQUISITIVO", inflationPresets: "AÑO RÁPIDO",
+        inflationSource: "US CPI-U · Bureau of Labor Statistics",
+        tileVAT: "IVA", tileVATSub: "Calculadora de impuesto",
+        navVAT: "IVA / Impuesto", vatExcl: "Sin IVA", vatIncl: "Con IVA",
+        vatRate: "TASA IVA", vatBase: "Precio base", vatTax: "Impuesto",
+        vatTotal: "Total", vatComparison: "COMPARAR TASAS",
         engTime: "Tiempo", engAcceleration: "Aceleración", engDensity: "Densidad",
         engPressure: "Presión", engEnergy: "Energía y trabajo", engPower: "Potencia",
         engForce: "Fuerza", engAngle: "Ángulo", engWireGauge: "Calibre de cable",
@@ -811,6 +889,7 @@ extension Loc {
         loanReminderName: "Nom", loanReminderPayment: "Paiement",
         loanReminderPayDay: "Jour de paiement", loanReminderDaysBefore: "Rappeler avant",
         loanReminderActive: "Rappels actifs", loanReminderDenied: "Activer les notifications dans Réglages",
+        loanStartDate: "Date début", loanFirstPayment: "Premier paiement", loanPayoffDate: "Date fin",
         rentVsBuy: "Louer/Acheter", monthlyRent: "LOYER MENSUEL", rentIncrease: "HAUSSE LOYER %/an",
         homeAppreciation: "VALORISATION %/an", yearsCompare: "ANNÉES À COMPARER",
         investReturn: "RENDEMENT INV. %/an", renting: "LOUER", buying: "ACHETER",
@@ -848,6 +927,17 @@ extension Loc {
         portfolioCoin: "Monnaie", portfolioAmount: "Quantité", portfolioBuyPrice: "Prix d'achat",
         portfolioDate: "Date d'achat", portfolioCost: "Coût", portfolioHoldings: "Positions",
         portfolioSelectCoin: "Choisir une monnaie",
+        tileInflation: "Inflation", tileInflationSub: "Calculateur IPC",
+        navInflation: "Inflation", inflationAmount: "MONTANT",
+        inflationFromYear: "DE", inflationToYear: "À",
+        inflationResult: "VALEUR AJUSTÉE", inflationTotal: "total",
+        inflationAnnual: "par an", inflationPeriod: "période",
+        inflationPower: "POUVOIR D'ACHAT", inflationPresets: "SÉLECTION RAPIDE",
+        inflationSource: "US CPI-U · Bureau of Labor Statistics",
+        tileVAT: "TVA", tileVATSub: "Calcul de taxe",
+        navVAT: "TVA / Taxe", vatExcl: "HT", vatIncl: "TTC",
+        vatRate: "TAUX TVA", vatBase: "Prix HT", vatTax: "TVA",
+        vatTotal: "TTC", vatComparison: "COMPARAISON TAUX",
         engTime: "Temps", engAcceleration: "Accélération", engDensity: "Densité",
         engPressure: "Pression", engEnergy: "Énergie et travail", engPower: "Puissance",
         engForce: "Force", engAngle: "Angle", engWireGauge: "Section de câble",
@@ -914,6 +1004,7 @@ extension Loc {
         loanReminderName: "Nome", loanReminderPayment: "Pagamento",
         loanReminderPayDay: "Giorno di pagamento", loanReminderDaysBefore: "Ricorda prima di",
         loanReminderActive: "Promemoria attivi", loanReminderDenied: "Attiva le notifiche nelle Impostazioni",
+        loanStartDate: "Data inizio", loanFirstPayment: "Prima rata", loanPayoffDate: "Data fine",
         rentVsBuy: "Affitto/Acquisto", monthlyRent: "AFFITTO MENSILE", rentIncrease: "AUMENTO AFFITTO %",
         homeAppreciation: "RIVALUTAZIONE %/anno", yearsCompare: "ANNI DA CONFRONTARE",
         investReturn: "RENDIMENTO INV. %", renting: "AFFITTARE", buying: "ACQUISTARE",
@@ -951,6 +1042,17 @@ extension Loc {
         portfolioCoin: "Moneta", portfolioAmount: "Quantità", portfolioBuyPrice: "Prezzo d'acquisto",
         portfolioDate: "Data d'acquisto", portfolioCost: "Costo", portfolioHoldings: "Posizioni",
         portfolioSelectCoin: "Seleziona moneta",
+        tileInflation: "Inflazione", tileInflationSub: "Calcol. IPC",
+        navInflation: "Inflazione", inflationAmount: "IMPORTO",
+        inflationFromYear: "DA", inflationToYear: "A",
+        inflationResult: "VALORE ADJ.", inflationTotal: "totale",
+        inflationAnnual: "per anno", inflationPeriod: "periodo",
+        inflationPower: "POTERE D'ACQUISTO", inflationPresets: "SELEZIONE RAPIDA",
+        inflationSource: "US CPI-U · Bureau of Labor Statistics",
+        tileVAT: "IVA", tileVATSub: "Calcolo tasse",
+        navVAT: "IVA / Tasse", vatExcl: "Senza IVA", vatIncl: "Con IVA",
+        vatRate: "ALIQUOTA IVA", vatBase: "Imponibile", vatTax: "IVA",
+        vatTotal: "Totale", vatComparison: "CONFRONTO ALIQUOTE",
         engTime: "Tempo", engAcceleration: "Accelerazione", engDensity: "Densità",
         engPressure: "Pressione", engEnergy: "Energia e lavoro", engPower: "Potenza",
         engForce: "Forza", engAngle: "Angolo", engWireGauge: "Sezione cavo",
@@ -1017,6 +1119,7 @@ extension Loc {
         loanReminderName: "Nome", loanReminderPayment: "Pagamento",
         loanReminderPayDay: "Dia de pagamento", loanReminderDaysBefore: "Notificar antes de",
         loanReminderActive: "Lembretes ativos", loanReminderDenied: "Ativar notificações em Configurações",
+        loanStartDate: "Data início", loanFirstPayment: "Primeiro pagamento", loanPayoffDate: "Data fim",
         rentVsBuy: "Alug./Compra", monthlyRent: "ALUGUEL MENSAL", rentIncrease: "AUMENTO ALUGUEL %",
         homeAppreciation: "VALORIZAÇÃO %/ano", yearsCompare: "ANOS A COMPARAR",
         investReturn: "RETORNO INV. %/ano", renting: "ALUGAR", buying: "COMPRAR",
@@ -1054,6 +1157,17 @@ extension Loc {
         portfolioCoin: "Moeda", portfolioAmount: "Quantidade", portfolioBuyPrice: "Preço de compra",
         portfolioDate: "Data de compra", portfolioCost: "Custo", portfolioHoldings: "Posições",
         portfolioSelectCoin: "Selecionar moeda",
+        tileInflation: "Inflação", tileInflationSub: "Calculadora IPC",
+        navInflation: "Inflação", inflationAmount: "VALOR",
+        inflationFromYear: "DE", inflationToYear: "ATÉ",
+        inflationResult: "VALOR AJUSTADO", inflationTotal: "total",
+        inflationAnnual: "por ano", inflationPeriod: "período",
+        inflationPower: "PODER DE COMPRA", inflationPresets: "SELEÇÃO RÁPIDA",
+        inflationSource: "US CPI-U · Bureau of Labor Statistics",
+        tileVAT: "IVA", tileVATSub: "Calculadora de impostos",
+        navVAT: "IVA / Impostos", vatExcl: "Sem IVA", vatIncl: "Com IVA",
+        vatRate: "TAXA IVA", vatBase: "Preço base", vatTax: "Imposto",
+        vatTotal: "Total", vatComparison: "COMPARAR TAXAS",
         engTime: "Tempo", engAcceleration: "Aceleração", engDensity: "Densidade",
         engPressure: "Pressão", engEnergy: "Energia e trabalho", engPower: "Potência",
         engForce: "Força", engAngle: "Ângulo", engWireGauge: "Bitola de fio",
@@ -1120,6 +1234,7 @@ extension Loc {
         loanReminderName: "Ad", loanReminderPayment: "Ödeme",
         loanReminderPayDay: "Ödeme günü", loanReminderDaysBefore: "Önceden bildir",
         loanReminderActive: "Aktif hatırlatıcılar", loanReminderDenied: "Ayarlardan bildirimleri etkinleştirin",
+        loanStartDate: "Başlangıç tarihi", loanFirstPayment: "İlk ödeme", loanPayoffDate: "Bitiş tarihi",
         rentVsBuy: "Kira/Satın Al", monthlyRent: "AYLIK KİRA", rentIncrease: "KİRA ARTIŞI %/yıl",
         homeAppreciation: "DEĞER ARTIŞI %/yıl", yearsCompare: "KARŞILAŞT. YILLAR",
         investReturn: "YATIRIM GETİRİSİ %", renting: "KİRALAMA", buying: "SATIN ALMA",
@@ -1157,6 +1272,17 @@ extension Loc {
         portfolioCoin: "Coin", portfolioAmount: "Miktar", portfolioBuyPrice: "Alım fiyatı",
         portfolioDate: "Alım tarihi", portfolioCost: "Maliyet", portfolioHoldings: "Pozisyonlar",
         portfolioSelectCoin: "Coin seç",
+        tileInflation: "Enflasyon", tileInflationSub: "TÜFE hesaplayıcı",
+        navInflation: "Enflasyon", inflationAmount: "MİKTAR",
+        inflationFromYear: "BAŞL.", inflationToYear: "BİTİŞ",
+        inflationResult: "DÜZELTİLMİŞ", inflationTotal: "toplam",
+        inflationAnnual: "yıllık", inflationPeriod: "dönem",
+        inflationPower: "SATIN ALMA GÜCÜ", inflationPresets: "HIZLI SEÇİM",
+        inflationSource: "US CPI-U · Bureau of Labor Statistics",
+        tileVAT: "KDV", tileVATSub: "Vergi hesaplayıcı",
+        navVAT: "KDV / Vergi", vatExcl: "KDV'siz", vatIncl: "KDV'li",
+        vatRate: "KDV ORANI", vatBase: "KDV'siz tutar", vatTax: "KDV",
+        vatTotal: "Toplam", vatComparison: "ORAN KARŞILAŞTIRMASI",
         engTime: "Zaman", engAcceleration: "İvme", engDensity: "Yoğunluk",
         engPressure: "Basınç", engEnergy: "Enerji ve iş", engPower: "Güç",
         engForce: "Kuvvet", engAngle: "Açı", engWireGauge: "Tel kalınlığı",
@@ -1223,6 +1349,7 @@ extension Loc {
         loanReminderName: "名称", loanReminderPayment: "还款额",
         loanReminderPayDay: "还款日", loanReminderDaysBefore: "提前提醒",
         loanReminderActive: "活跃提醒", loanReminderDenied: "请在设置中开启通知",
+        loanStartDate: "开始日期", loanFirstPayment: "首次还款", loanPayoffDate: "还清日期",
         rentVsBuy: "租/买", monthlyRent: "月租金", rentIncrease: "租金涨幅 %/年",
         homeAppreciation: "房产增值 %/年", yearsCompare: "比较年限",
         investReturn: "投资回报 %/年", renting: "租房", buying: "购房",
@@ -1260,6 +1387,17 @@ extension Loc {
         portfolioCoin: "币种", portfolioAmount: "数量", portfolioBuyPrice: "买入价格",
         portfolioDate: "买入日期", portfolioCost: "成本", portfolioHoldings: "持仓",
         portfolioSelectCoin: "选择币种",
+        tileInflation: "通货膨胀", tileInflationSub: "CPI计算器",
+        navInflation: "通货膨胀", inflationAmount: "金额",
+        inflationFromYear: "起始年", inflationToYear: "结束年",
+        inflationResult: "调整后价值", inflationTotal: "总计",
+        inflationAnnual: "年均", inflationPeriod: "期间",
+        inflationPower: "购买力", inflationPresets: "快速选择",
+        inflationSource: "US CPI-U · 美国劳工统计局",
+        tileVAT: "增值税", tileVATSub: "税务计算器",
+        navVAT: "增值税/税务", vatExcl: "不含税", vatIncl: "含税",
+        vatRate: "税率", vatBase: "不含税价格", vatTax: "税额",
+        vatTotal: "含税总价", vatComparison: "税率对比",
         engTime: "时间", engAcceleration: "加速度", engDensity: "密度",
         engPressure: "压力", engEnergy: "能量和功", engPower: "功率",
         engForce: "力", engAngle: "角度", engWireGauge: "线径",

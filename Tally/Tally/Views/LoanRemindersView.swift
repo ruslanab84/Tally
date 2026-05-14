@@ -7,6 +7,7 @@ struct LoanRemindersView: View {
 
     let store: LoanReminderStore
     let suggestedPayment: Double
+    var suggestedPaymentDay: Int = 15
 
     @State private var name = ""
     @State private var amountText = ""
@@ -57,6 +58,7 @@ struct LoanRemindersView: View {
         .onAppear {
             name = "Loan"
             amountText = suggestedPayment > 0 ? String(format: "%.2f", suggestedPayment) : ""
+            paymentDay = max(1, min(28, suggestedPaymentDay))
         }
     }
 

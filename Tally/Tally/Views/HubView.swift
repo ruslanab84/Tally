@@ -21,6 +21,8 @@ struct HubTileData: Identifiable {
         HubTileData(id: "bmi", screen: .bmi, labelKey: \.tileBMI, subKey: \.tileBMISub, icon: "figure.stand", accentKey: \.success),
         HubTileData(id: "engineering", screen: .engineering, labelKey: \.tileEngineering, subKey: \.tileEngineeringSub, icon: "gearshape.2", accentKey: \.teal),
         HubTileData(id: "scientific", screen: .scientific, labelKey: \.tileScientific, subKey: \.tileScientificSub, icon: "function", accentKey: \.blue),
+        HubTileData(id: "inflation", screen: .inflation, labelKey: \.tileInflation, subKey: \.tileInflationSub, icon: "chart.line.uptrend.xyaxis", accentKey: \.red),
+        HubTileData(id: "vat", screen: .vat, labelKey: \.tileVAT, subKey: \.tileVATSub, icon: "percent", accentKey: \.success),
     ]
 }
 

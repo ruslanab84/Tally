@@ -107,10 +107,12 @@ struct ContentView: View {
         case .bmi:        BMIView()
         case .engineering: EngineeringView()
         case .crypto:      CryptoView()
+        case .inflation:   InflationView()
+        case .vat:         VATView()
         }
     }
 }
 
 enum Screen: String, Hashable {
-    case simple, scientific, currency, units, temp, date, sizes, tip, finance, bmi, engineering, crypto
+    case simple, scientific, currency, units, temp, date, sizes, tip, finance, bmi, engineering, crypto, inflation, vat
 }
