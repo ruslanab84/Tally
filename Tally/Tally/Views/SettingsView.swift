@@ -15,6 +15,13 @@ struct SettingsView: View {
     @State private var soundEnabled = false
     @State private var livePreview = true
 
+    private var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -217,8 +224,6 @@ struct SettingsView: View {
                     SettingsToggleRow(T: T, label: L.sound, isOn: $soundEnabled)
                     Divider().padding(.leading, 16)
                     SettingsToggleRow(T: T, label: L.livePreview, isOn: $livePreview)
-                    Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: L.angleUnits, value: L.degrees, showChevron: true, isLast: true)
                 }
 
                 // Conversions
@@ -259,15 +264,11 @@ struct SettingsView: View {
                     .padding(.vertical, 14)
                     .frame(minHeight: 50)
 
-                    Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: L.favoriteUnits, value: "6 \(L.selected)", showChevron: true)
-                    Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: L.updateRates, value: L.daily, showChevron: true, isLast: true)
                 }
 
                 // About
                 SettingsSection(T: T, title: L.about) {
-                    SettingsRow(T: T, label: L.version, value: "1.0 (beta)", showChevron: false, useMono: true)
+                    SettingsRow(T: T, label: L.version, value: appVersion, showChevron: false, useMono: true)
                     Divider().padding(.leading, 16)
                     SettingsRow(T: T, label: L.privacy, showChevron: true)
                     Divider().padding(.leading, 16)

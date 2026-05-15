@@ -1,7 +1,12 @@
 import SwiftUI
+import FirebaseCore
 
 @main
 struct TallyApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
+
     @AppStorage("isDarkMode") private var isDarkMode = false
     @AppStorage("appLanguage") private var appLanguage = "en"
     @AppStorage("accentColor") private var accentColor = "orange"

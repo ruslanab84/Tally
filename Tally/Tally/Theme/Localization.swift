@@ -370,6 +370,12 @@ struct Loc {
     let engIlluminance: String
     let engRadiation: String
     let engRadioactivity: String
+
+    // Favourites
+    let favFavourites: String
+    let favSave: String
+    let favEmpty: String
+    let favLoad: String
 }
 
 // MARK: - English
@@ -483,7 +489,8 @@ extension Loc {
         engForce: "Force", engAngle: "Angle", engWireGauge: "Wire Gauge",
         engRotation: "Rotation Speed", engTorque: "Torque", engTempDiff: "Temp Difference",
         engVolumeFlow: "Volume Flow", engMassFlow: "Mass Flow", engIlluminance: "Illuminance",
-        engRadiation: "Radiation", engRadioactivity: "Radioactivity"
+        engRadiation: "Radiation", engRadioactivity: "Radioactivity",
+        favFavourites: "Favourites", favSave: "Save", favEmpty: "No saved calculations", favLoad: "Load into Calculator"
     )
 }
 
@@ -598,7 +605,8 @@ extension Loc {
         engForce: "Сила", engAngle: "Угловая мера", engWireGauge: "Калибр проводов",
         engRotation: "Скорость вращения", engTorque: "Крутящий момент", engTempDiff: "Разница температур",
         engVolumeFlow: "Расход объёмный", engMassFlow: "Расход массовый", engIlluminance: "Освещённость",
-        engRadiation: "Радиация", engRadioactivity: "Радиоактивность"
+        engRadiation: "Радиация", engRadioactivity: "Радиоактивность",
+        favFavourites: "Избранное", favSave: "Сохранить", favEmpty: "Нет сохранённых расчётов", favLoad: "Загрузить в калькулятор"
     )
 }
 
@@ -713,7 +721,8 @@ extension Loc {
         engForce: "Kraft", engAngle: "Winkel", engWireGauge: "Drahtquerschnitt",
         engRotation: "Drehzahl", engTorque: "Drehmoment", engTempDiff: "Temp.-Differenz",
         engVolumeFlow: "Volumenstrom", engMassFlow: "Massenstrom", engIlluminance: "Beleuchtungsstärke",
-        engRadiation: "Strahlung", engRadioactivity: "Radioaktivität"
+        engRadiation: "Strahlung", engRadioactivity: "Radioaktivität",
+        favFavourites: "Favoriten", favSave: "Speichern", favEmpty: "Keine gespeicherten Berechnungen", favLoad: "In Rechner laden"
     )
 }
 
@@ -828,7 +837,8 @@ extension Loc {
         engForce: "Fuerza", engAngle: "Ángulo", engWireGauge: "Calibre de cable",
         engRotation: "Vel. rotación", engTorque: "Par motor", engTempDiff: "Dif. temperatura",
         engVolumeFlow: "Caudal volumétrico", engMassFlow: "Caudal másico", engIlluminance: "Iluminancia",
-        engRadiation: "Radiación", engRadioactivity: "Radiactividad"
+        engRadiation: "Radiación", engRadioactivity: "Radiactividad",
+        favFavourites: "Favoritos", favSave: "Guardar", favEmpty: "Sin cálculos guardados", favLoad: "Cargar en calculadora"
     )
 }
 
@@ -943,7 +953,8 @@ extension Loc {
         engForce: "Force", engAngle: "Angle", engWireGauge: "Section de câble",
         engRotation: "Vitesse de rotation", engTorque: "Couple", engTempDiff: "Écart de temp.",
         engVolumeFlow: "Débit volumique", engMassFlow: "Débit massique", engIlluminance: "Éclairement",
-        engRadiation: "Radiation", engRadioactivity: "Radioactivité"
+        engRadiation: "Radiation", engRadioactivity: "Radioactivité",
+        favFavourites: "Favoris", favSave: "Sauvegarder", favEmpty: "Aucun calcul sauvegardé", favLoad: "Charger dans la calculatrice"
     )
 }
 
@@ -1058,7 +1069,8 @@ extension Loc {
         engForce: "Forza", engAngle: "Angolo", engWireGauge: "Sezione cavo",
         engRotation: "Velocità rotazione", engTorque: "Coppia", engTempDiff: "Diff. temperatura",
         engVolumeFlow: "Portata volumetrica", engMassFlow: "Portata massica", engIlluminance: "Illuminamento",
-        engRadiation: "Radiazione", engRadioactivity: "Radioattività"
+        engRadiation: "Radiazione", engRadioactivity: "Radioattività",
+        favFavourites: "Preferiti", favSave: "Salva", favEmpty: "Nessun calcolo salvato", favLoad: "Carica nella calcolatrice"
     )
 }
 
@@ -1173,7 +1185,8 @@ extension Loc {
         engForce: "Força", engAngle: "Ângulo", engWireGauge: "Bitola de fio",
         engRotation: "Vel. rotação", engTorque: "Torque", engTempDiff: "Dif. temperatura",
         engVolumeFlow: "Vazão volumétrica", engMassFlow: "Vazão mássica", engIlluminance: "Iluminância",
-        engRadiation: "Radiação", engRadioactivity: "Radioatividade"
+        engRadiation: "Radiação", engRadioactivity: "Radioatividade",
+        favFavourites: "Favoritos", favSave: "Salvar", favEmpty: "Nenhum cálculo salvo", favLoad: "Carregar na calculadora"
     )
 }
 
@@ -1288,7 +1301,8 @@ extension Loc {
         engForce: "Kuvvet", engAngle: "Açı", engWireGauge: "Tel kalınlığı",
         engRotation: "Dönüş hızı", engTorque: "Tork", engTempDiff: "Sıcaklık farkı",
         engVolumeFlow: "Hacimsel debi", engMassFlow: "Kütlesel debi", engIlluminance: "Aydınlık",
-        engRadiation: "Radyasyon", engRadioactivity: "Radyoaktivite"
+        engRadiation: "Radyasyon", engRadioactivity: "Radyoaktivite",
+        favFavourites: "Favoriler", favSave: "Kaydet", favEmpty: "Kayıtlı hesaplama yok", favLoad: "Hesap makinesine yükle"
     )
 }
 
@@ -1403,7 +1417,8 @@ extension Loc {
         engForce: "力", engAngle: "角度", engWireGauge: "线径",
         engRotation: "转速", engTorque: "扭矩", engTempDiff: "温差",
         engVolumeFlow: "体积流量", engMassFlow: "质量流量", engIlluminance: "照度",
-        engRadiation: "辐射", engRadioactivity: "放射性"
+        engRadiation: "辐射", engRadioactivity: "放射性",
+        favFavourites: "收藏", favSave: "保存", favEmpty: "没有保存的计算", favLoad: "加载到计算器"
     )
 }
 

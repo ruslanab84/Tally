@@ -69,6 +69,13 @@ struct FinanceView: View {
     @State private var showLoanReminders = false
     @State private var loanReminderStore = LoanReminderStore()
 
+    // Favourites
+    @State private var favStore = FavouriteLoanStore()
+    @State private var showFavs = false
+    @State private var showSaveAlert = false
+    @State private var favName = ""
+    @State private var savingKind = "loan"
+
     @FocusState private var focused: FocusField?
 
     enum FocusField: Hashable {
@@ -116,6 +123,25 @@ struct FinanceView: View {
                 Spacer()
                 Button(L.done) { focused = nil }
             }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button { showFavs = true } label: {
+                    Image(systemName: "bookmark")
+                        .font(.system(size: 16))
+                }
+            }
+        }
+        .sheet(isPresented: $showFavs) {
+            FavouritesView(store: favStore) { fav in
+                loadFavourite(fav)
+                showFavs = false
+            }
+            .environment(\.tokens, T)
+            .environment(\.loc, L)
+        }
+        .alert(L.favSave, isPresented: $showSaveAlert) {
+            TextField(savingKind == "loan" ? L.loan : L.mortgage, text: $favName)
+            Button(L.favSave) { saveFavourite() }
+            Button(L.cancel, role: .cancel) {}
         }
     }
 
@@ -215,10 +241,23 @@ struct FinanceView: View {
 
             if payment > 0 {
                 VStack(spacing: 0) {
-                    Text(loanPaymentType == "diff" ? L.diffPayment : L.monthlyPayment)
-                        .font(.custom("JetBrainsMono-SemiBold", size: 11))
-                        .tracking(0.6)
-                        .opacity(0.85)
+                    HStack {
+                        Text(loanPaymentType == "diff" ? L.diffPayment : L.monthlyPayment)
+                            .font(.custom("JetBrainsMono-SemiBold", size: 11))
+                            .tracking(0.6)
+                            .opacity(0.85)
+                        Spacer()
+                        Button {
+                            savingKind = "loan"
+                            favName = "\(loanRate)% \(loanTerm)\(loanTermUnit == "years" ? L.yr : L.mo)"
+                            showSaveAlert = true
+                        } label: {
+                            Image(systemName: "bookmark")
+                                .font(.system(size: 14))
+                                .opacity(0.8)
+                        }
+                        .buttonStyle(.plain)
+                    }
 
                     Text(fmtCurrency(payment))
                         .font(.custom("JetBrainsMono-SemiBold", size: 40))
@@ -483,10 +522,23 @@ struct FinanceView: View {
             if total > 0 && termMonths > 0 {
                 // Result card
                 VStack(spacing: 0) {
-                    Text(L.totalMonthly)
-                        .font(.custom("JetBrainsMono-SemiBold", size: 11))
-                        .tracking(0.6)
-                        .opacity(0.85)
+                    HStack {
+                        Text(L.totalMonthly)
+                            .font(.custom("JetBrainsMono-SemiBold", size: 11))
+                            .tracking(0.6)
+                            .opacity(0.85)
+                        Spacer()
+                        Button {
+                            savingKind = "mortgage"
+                            favName = "\(mortgageRate)% \(mortgageTerm)\(L.yr)"
+                            showSaveAlert = true
+                        } label: {
+                            Image(systemName: "bookmark")
+                                .font(.system(size: 14))
+                                .opacity(0.8)
+                        }
+                        .buttonStyle(.plain)
+                    }
 
                     Text(fmtCurrency(total))
                         .font(.custom("JetBrainsMono-SemiBold", size: 40))
@@ -903,8 +955,6 @@ struct FinanceView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             rvbRow(label: L.totalPaid, value: fmtCurrency(totalRentPaid), highlight: false)
                             rvbRow(label: L.invested, value: fmtCurrency(investedDP), highlight: true)
-                            Divider().background(.white.opacity(0.3))
-                            rvbRow(label: L.netPosition, value: fmtCurrency(rentNetWealth), highlight: rentNetWealth >= 0)
                         }
                         .frame(maxWidth: .infinity)
 
@@ -914,8 +964,6 @@ struct FinanceView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             rvbRow(label: L.totalPaid, value: fmtCurrency(totalMortgagePaid), highlight: false)
                             rvbRow(label: L.homeEquity, value: fmtCurrency(equity), highlight: true)
-                            Divider().background(.white.opacity(0.3))
-                            rvbRow(label: L.netPosition, value: fmtCurrency(buyNetWealth), highlight: buyNetWealth >= 0)
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -1289,10 +1337,7 @@ struct FinanceView: View {
                 .background(T.success)
                 .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
 
-                // Growth breakdown
-                if totalMonths > 0 && totalMonths <= 600 {
-                    depositBreakdown(initial: initial, annualRate: annual, contribution: monthly, totalMonths: totalMonths)
-                }
+
             }
         }
     }
@@ -1704,6 +1749,48 @@ struct FinanceView: View {
             return String(format: "$%.1fK", value / 1_000)
         }
         return String(format: "$%.0f", value)
+    }
+
+    private func saveFavourite() {
+        let name = favName.trimmingCharacters(in: .whitespaces).isEmpty
+            ? (savingKind == "loan" ? "\(L.loan) \(loanRate)%" : "\(L.mortgage) \(mortgageRate)%")
+            : favName
+        let fav = FavouriteLoan(
+            name: name,
+            kind: savingKind,
+            loanAmount: loanAmount,
+            loanRate: loanRate,
+            loanTerm: loanTerm,
+            loanTermUnit: loanTermUnit,
+            loanPaymentType: loanPaymentType,
+            propPrice: propPrice,
+            downPayment: downPaymentMode == "amount" ? downPaymentAmt : String(format: "%.0f", (Double(propPrice) ?? 0) * (Double(downPaymentPct) ?? 20) / 100),
+            downPaymentMode: downPaymentMode,
+            mortRate: mortgageRate,
+            mortTerm: mortgageTerm,
+            mortPaymentType: mortgagePaymentType
+        )
+        favStore.add(fav)
+        favName = ""
+    }
+
+    private func loadFavourite(_ fav: FavouriteLoan) {
+        if fav.kind == "loan" {
+            loanAmount = fav.loanAmount
+            loanRate = fav.loanRate
+            loanTerm = fav.loanTerm
+            loanTermUnit = fav.loanTermUnit
+            loanPaymentType = fav.loanPaymentType
+            mode = "loan"
+        } else {
+            propPrice = fav.propPrice
+            downPaymentAmt = fav.downPayment
+            downPaymentMode = "amount"
+            mortgageRate = fav.mortRate
+            mortgageTerm = fav.mortTerm
+            mortgagePaymentType = fav.mortPaymentType
+            mode = "mortgage"
+        }
     }
 }
 
