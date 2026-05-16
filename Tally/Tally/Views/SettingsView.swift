@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 struct SettingsView: View {
     @Environment(\.tokens) private var T
@@ -11,9 +12,13 @@ struct SettingsView: View {
     @AppStorage("decimalPrecision") private var decimalPrecision = 4
     @AppStorage("defaultCurrency") private var defaultCurrency = "USD"
 
-    @State private var hapticEnabled = true
+    @Environment(\.requestReview) private var requestReview
+
+    @AppStorage("hapticEnabled") private var hapticEnabled = true
     @State private var soundEnabled = false
     @State private var livePreview = true
+    @State private var showFeedback = false
+    @State private var showPrivacy = false
 
     private var appVersion: String {
         let info = Bundle.main.infoDictionary
@@ -270,9 +275,39 @@ struct SettingsView: View {
                 SettingsSection(T: T, title: L.about) {
                     SettingsRow(T: T, label: L.version, value: appVersion, showChevron: false, useMono: true)
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: L.privacy, showChevron: true)
+                    Button { requestReview() } label: {
+                        HStack {
+                            Text(L.rateApp)
+                                .font(.custom("JetBrainsMono-Medium", size: 15))
+                                .foregroundStyle(T.text)
+                            Spacer()
+                            HStack(spacing: 2) {
+                                ForEach(0..<5, id: \.self) { _ in
+                                    Image(systemName: "star.fill")
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(T.yellow)
+                                }
+                            }
+                            Image(systemName: "chevron.right")
+                                .font(.custom("JetBrainsMono-SemiBold", size: 12))
+                                .foregroundStyle(T.textTertiary)
+                                .padding(.leading, 4)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .frame(minHeight: 50)
+                    }
+                    .buttonStyle(.plain)
                     Divider().padding(.leading, 16)
-                    SettingsRow(T: T, label: L.sendFeedback, showChevron: true, isLast: true)
+                    Button { showPrivacy = true } label: {
+                        SettingsRow(T: T, label: L.privacy, showChevron: true)
+                    }
+                    .buttonStyle(.plain)
+                    Divider().padding(.leading, 16)
+                    Button { showFeedback = true } label: {
+                        SettingsRow(T: T, label: L.sendFeedback, showChevron: true, isLast: true)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 16)
@@ -285,6 +320,16 @@ struct SettingsView: View {
         ]) }
         .navigationTitle(L.navSettings)
         .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showFeedback) {
+            FeedbackView()
+                .environment(\.tokens, T)
+                .environment(\.loc, L)
+        }
+        .sheet(isPresented: $showPrivacy) {
+            PrivacyPolicyView()
+                .environment(\.tokens, T)
+                .environment(\.loc, L)
+        }
     }
 }
 

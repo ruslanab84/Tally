@@ -72,9 +72,8 @@ struct FinanceView: View {
     // Favourites
     @State private var favStore = FavouriteLoanStore()
     @State private var showFavs = false
-    @State private var showSaveAlert = false
-    @State private var favName = ""
-    @State private var savingKind = "loan"
+    @State private var loanSaved = false
+    @State private var mortSaved = false
 
     @FocusState private var focused: FocusField?
 
@@ -137,11 +136,6 @@ struct FinanceView: View {
             }
             .environment(\.tokens, T)
             .environment(\.loc, L)
-        }
-        .alert(L.favSave, isPresented: $showSaveAlert) {
-            TextField(savingKind == "loan" ? L.loan : L.mortgage, text: $favName)
-            Button(L.favSave) { saveFavourite() }
-            Button(L.cancel, role: .cancel) {}
         }
     }
 
@@ -248,13 +242,23 @@ struct FinanceView: View {
                             .opacity(0.85)
                         Spacer()
                         Button {
-                            savingKind = "loan"
-                            favName = "\(loanRate)% \(loanTerm)\(loanTermUnit == "years" ? L.yr : L.mo)"
-                            showSaveAlert = true
+                            favStore.add(FavouriteLoan(
+                                name: "\(loanRate)% · \(loanTerm) \(loanTermUnit == "years" ? L.yr : L.mo)",
+                                kind: "loan",
+                                loanAmount: loanAmount,
+                                loanRate: loanRate,
+                                loanTerm: loanTerm,
+                                loanTermUnit: loanTermUnit,
+                                loanPaymentType: loanPaymentType
+                            ))
+                            withAnimation(.spring(duration: 0.25)) { loanSaved = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                withAnimation { loanSaved = false }
+                            }
                         } label: {
-                            Image(systemName: "bookmark")
+                            Image(systemName: loanSaved ? "bookmark.fill" : "bookmark")
                                 .font(.system(size: 14))
-                                .opacity(0.8)
+                                .foregroundStyle(loanSaved ? Color.yellow : Color.white.opacity(0.8))
                         }
                         .buttonStyle(.plain)
                     }
@@ -529,13 +533,27 @@ struct FinanceView: View {
                             .opacity(0.85)
                         Spacer()
                         Button {
-                            savingKind = "mortgage"
-                            favName = "\(mortgageRate)% \(mortgageTerm)\(L.yr)"
-                            showSaveAlert = true
+                            let dp = downPaymentMode == "amount"
+                                ? downPaymentAmt
+                                : String(format: "%.0f", (Double(propPrice) ?? 0) * (Double(downPaymentPct) ?? 20) / 100)
+                            favStore.add(FavouriteLoan(
+                                name: "\(mortgageRate)% · \(mortgageTerm) \(L.yr)",
+                                kind: "mortgage",
+                                propPrice: propPrice,
+                                downPayment: dp,
+                                downPaymentMode: downPaymentMode,
+                                mortRate: mortgageRate,
+                                mortTerm: mortgageTerm,
+                                mortPaymentType: mortgagePaymentType
+                            ))
+                            withAnimation(.spring(duration: 0.25)) { mortSaved = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                withAnimation { mortSaved = false }
+                            }
                         } label: {
-                            Image(systemName: "bookmark")
+                            Image(systemName: mortSaved ? "bookmark.fill" : "bookmark")
                                 .font(.system(size: 14))
-                                .opacity(0.8)
+                                .foregroundStyle(mortSaved ? Color.yellow : Color.white.opacity(0.8))
                         }
                         .buttonStyle(.plain)
                     }
@@ -1749,29 +1767,6 @@ struct FinanceView: View {
             return String(format: "$%.1fK", value / 1_000)
         }
         return String(format: "$%.0f", value)
-    }
-
-    private func saveFavourite() {
-        let name = favName.trimmingCharacters(in: .whitespaces).isEmpty
-            ? (savingKind == "loan" ? "\(L.loan) \(loanRate)%" : "\(L.mortgage) \(mortgageRate)%")
-            : favName
-        let fav = FavouriteLoan(
-            name: name,
-            kind: savingKind,
-            loanAmount: loanAmount,
-            loanRate: loanRate,
-            loanTerm: loanTerm,
-            loanTermUnit: loanTermUnit,
-            loanPaymentType: loanPaymentType,
-            propPrice: propPrice,
-            downPayment: downPaymentMode == "amount" ? downPaymentAmt : String(format: "%.0f", (Double(propPrice) ?? 0) * (Double(downPaymentPct) ?? 20) / 100),
-            downPaymentMode: downPaymentMode,
-            mortRate: mortgageRate,
-            mortTerm: mortgageTerm,
-            mortPaymentType: mortgagePaymentType
-        )
-        favStore.add(fav)
-        favName = ""
     }
 
     private func loadFavourite(_ fav: FavouriteLoan) {

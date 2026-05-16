@@ -292,6 +292,7 @@ struct Loc {
     let about: String
     let version: String
     let privacy: String
+    let rateApp: String
     let sendFeedback: String
 
     // Crypto
@@ -461,7 +462,7 @@ extension Loc {
         livePreview: "Live preview", angleUnits: "Angle units", degrees: "Degrees",
         conversionsSection: "Conversions", defaultCurrency: "Default currency",
         favoriteUnits: "Favorite units", selected: "selected", updateRates: "Update rates", daily: "Daily",
-        about: "About", version: "Version", privacy: "Privacy", sendFeedback: "Send feedback",
+        about: "About", version: "Version", privacy: "Privacy", rateApp: "Rate the App", sendFeedback: "Send feedback",
         tileCrypto: "Crypto", tileCryptoSub: "Live prices",
         navCrypto: "Crypto", cryptoConverter: "CONVERTER", cryptoAmount: "Amount",
         cryptoPrices: "PRICES", cryptoShowAll: "Show all", cryptoShowLess: "Show less",
@@ -577,7 +578,7 @@ extension Loc {
         livePreview: "Предпросмотр", angleUnits: "Ед. углов", degrees: "Градусы",
         conversionsSection: "Конвертация", defaultCurrency: "Валюта по умолч.",
         favoriteUnits: "Избранные ед.", selected: "выбрано", updateRates: "Обновление курсов", daily: "Ежедневно",
-        about: "О приложении", version: "Версия", privacy: "Конфиденциальность", sendFeedback: "Обратная связь",
+        about: "О приложении", version: "Версия", privacy: "Конфиденциальность", rateApp: "Оценить приложение", sendFeedback: "Обратная связь",
         tileCrypto: "Крипто", tileCryptoSub: "Курсы онлайн",
         navCrypto: "Крипто", cryptoConverter: "КОНВЕРТЕР", cryptoAmount: "Количество",
         cryptoPrices: "ЦЕНЫ", cryptoShowAll: "Показать все", cryptoShowLess: "Свернуть",
@@ -693,7 +694,7 @@ extension Loc {
         livePreview: "Vorschau", angleUnits: "Winkeleinheit", degrees: "Grad",
         conversionsSection: "Umrechnungen", defaultCurrency: "Standardwährung",
         favoriteUnits: "Favoriteneinheiten", selected: "gewählt", updateRates: "Kurse aktualisieren", daily: "Täglich",
-        about: "Über", version: "Version", privacy: "Datenschutz", sendFeedback: "Feedback senden",
+        about: "Über", version: "Version", privacy: "Datenschutz", rateApp: "App bewerten", sendFeedback: "Feedback senden",
         tileCrypto: "Krypto", tileCryptoSub: "Live-Kurse",
         navCrypto: "Krypto", cryptoConverter: "UMRECHNER", cryptoAmount: "Menge",
         cryptoPrices: "PREISE", cryptoShowAll: "Alle anzeigen", cryptoShowLess: "Weniger",
@@ -809,7 +810,7 @@ extension Loc {
         livePreview: "Vista previa", angleUnits: "Unidad de ángulo", degrees: "Grados",
         conversionsSection: "Conversiones", defaultCurrency: "Moneda predeterminada",
         favoriteUnits: "Unidades favoritas", selected: "seleccionadas", updateRates: "Actualizar tasas", daily: "Diario",
-        about: "Acerca de", version: "Versión", privacy: "Privacidad", sendFeedback: "Enviar comentarios",
+        about: "Acerca de", version: "Versión", privacy: "Privacidad", rateApp: "Valorar la app", sendFeedback: "Enviar comentarios",
         tileCrypto: "Cripto", tileCryptoSub: "Precios en vivo",
         navCrypto: "Cripto", cryptoConverter: "CONVERTIDOR", cryptoAmount: "Cantidad",
         cryptoPrices: "PRECIOS", cryptoShowAll: "Mostrar todo", cryptoShowLess: "Mostrar menos",
@@ -925,7 +926,7 @@ extension Loc {
         livePreview: "Aperçu", angleUnits: "Unité d'angle", degrees: "Degrés",
         conversionsSection: "Conversions", defaultCurrency: "Devise par défaut",
         favoriteUnits: "Unités favorites", selected: "sélectionnées", updateRates: "Mettre à jour les taux", daily: "Quotidien",
-        about: "À propos", version: "Version", privacy: "Confidentialité", sendFeedback: "Envoyer un commentaire",
+        about: "À propos", version: "Version", privacy: "Confidentialité", rateApp: "Noter l'app", sendFeedback: "Envoyer un commentaire",
         tileCrypto: "Crypto", tileCryptoSub: "Prix en direct",
         navCrypto: "Crypto", cryptoConverter: "CONVERTISSEUR", cryptoAmount: "Montant",
         cryptoPrices: "PRIX", cryptoShowAll: "Tout afficher", cryptoShowLess: "Réduire",
@@ -1041,7 +1042,7 @@ extension Loc {
         livePreview: "Anteprima", angleUnits: "Unità angolo", degrees: "Gradi",
         conversionsSection: "Conversioni", defaultCurrency: "Valuta predefinita",
         favoriteUnits: "Unità preferite", selected: "selezionate", updateRates: "Aggiorna tassi", daily: "Giornaliero",
-        about: "Informazioni", version: "Versione", privacy: "Privacy", sendFeedback: "Invia feedback",
+        about: "Informazioni", version: "Versione", privacy: "Privacy", rateApp: "Valuta l'app", sendFeedback: "Invia feedback",
         tileCrypto: "Crypto", tileCryptoSub: "Prezzi live",
         navCrypto: "Crypto", cryptoConverter: "CONVERTITORE", cryptoAmount: "Quantità",
         cryptoPrices: "PREZZI", cryptoShowAll: "Mostra tutto", cryptoShowLess: "Mostra meno",
@@ -1157,7 +1158,7 @@ extension Loc {
         livePreview: "Visualização", angleUnits: "Unidade de ângulo", degrees: "Graus",
         conversionsSection: "Conversões", defaultCurrency: "Moeda padrão",
         favoriteUnits: "Unidades favoritas", selected: "selecionadas", updateRates: "Atualizar taxas", daily: "Diário",
-        about: "Sobre", version: "Versão", privacy: "Privacidade", sendFeedback: "Enviar feedback",
+        about: "Sobre", version: "Versão", privacy: "Privacidade", rateApp: "Avaliar o app", sendFeedback: "Enviar feedback",
         tileCrypto: "Cripto", tileCryptoSub: "Preços ao vivo",
         navCrypto: "Cripto", cryptoConverter: "CONVERSOR", cryptoAmount: "Quantidade",
         cryptoPrices: "PREÇOS", cryptoShowAll: "Mostrar tudo", cryptoShowLess: "Mostrar menos",
@@ -1273,7 +1274,7 @@ extension Loc {
         livePreview: "Ön izleme", angleUnits: "Açı birimi", degrees: "Derece",
         conversionsSection: "Dönüşümler", defaultCurrency: "Varsayılan para birimi",
         favoriteUnits: "Favori birimler", selected: "seçili", updateRates: "Kurları güncelle", daily: "Günlük",
-        about: "Hakkında", version: "Sürüm", privacy: "Gizlilik", sendFeedback: "Geri bildirim gönder",
+        about: "Hakkında", version: "Sürüm", privacy: "Gizlilik", rateApp: "Uygulamayı değerlendir", sendFeedback: "Geri bildirim gönder",
         tileCrypto: "Kripto", tileCryptoSub: "Canlı fiyatlar",
         navCrypto: "Kripto", cryptoConverter: "DÖNÜŞTÜRÜCÜ", cryptoAmount: "Miktar",
         cryptoPrices: "FİYATLAR", cryptoShowAll: "Tümünü göster", cryptoShowLess: "Daha az",
@@ -1389,7 +1390,7 @@ extension Loc {
         livePreview: "实时预览", angleUnits: "角度单位", degrees: "度",
         conversionsSection: "转换", defaultCurrency: "默认货币",
         favoriteUnits: "常用单位", selected: "已选", updateRates: "更新汇率", daily: "每日",
-        about: "关于", version: "版本", privacy: "隐私", sendFeedback: "发送反馈",
+        about: "关于", version: "版本", privacy: "隐私", rateApp: "给应用评分", sendFeedback: "发送反馈",
         tileCrypto: "加密货币", tileCryptoSub: "实时价格",
         navCrypto: "加密货币", cryptoConverter: "转换器", cryptoAmount: "数量",
         cryptoPrices: "价格", cryptoShowAll: "显示全部", cryptoShowLess: "收起",

@@ -110,6 +110,7 @@ struct SciCalcView: View {
     // Graph state
     @State private var graphFunc: GraphFunc = .sine
 
+    @AppStorage("hapticEnabled") private var hapticEnabled = true
     @State private var tapCount = 0
 
     var body: some View {
@@ -137,7 +138,7 @@ struct SciCalcView: View {
         ]) }
         .navigationTitle(L.navScientific)
         .navigationBarTitleDisplayMode(.large)
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount) { _, _ in hapticEnabled }
     }
 
     // MARK: - Scientific View

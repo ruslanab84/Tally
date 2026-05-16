@@ -8,6 +8,7 @@ struct SimpleCalcView: View {
     @State private var firstOperand: Double = 0
     @State private var pendingOp: String? = nil
     @State private var isNewInput = true
+    @AppStorage("hapticEnabled") private var hapticEnabled = true
     @State private var tapCount = 0
 
     var body: some View {
@@ -78,7 +79,7 @@ struct SimpleCalcView: View {
         ]) }
         .navigationTitle(L.navCalculator)
         .navigationBarTitleDisplayMode(.large)
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount) { _, _ in hapticEnabled }
     }
 
     // MARK: - Input handling
