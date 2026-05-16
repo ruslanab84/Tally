@@ -70,7 +70,7 @@ struct FinanceView: View {
     @State private var loanReminderStore = LoanReminderStore()
 
     // Favourites
-    @State private var favStore = FavouriteLoanStore()
+    @State private var savedLoans: [FavouriteLoan] = loadFavouriteLoans()
     @State private var showFavs = false
     @State private var loanSaved = false
     @State private var mortSaved = false
@@ -130,7 +130,7 @@ struct FinanceView: View {
             }
         }
         .sheet(isPresented: $showFavs) {
-            FavouritesView(store: favStore) { fav in
+            FavouritesView(loans: $savedLoans) { fav in
                 loadFavourite(fav)
                 showFavs = false
             }
@@ -242,7 +242,7 @@ struct FinanceView: View {
                             .opacity(0.85)
                         Spacer()
                         Button {
-                            favStore.add(FavouriteLoan(
+                            let fav = FavouriteLoan(
                                 name: "\(loanRate)% · \(loanTerm) \(loanTermUnit == "years" ? L.yr : L.mo)",
                                 kind: "loan",
                                 loanAmount: loanAmount,
@@ -250,7 +250,9 @@ struct FinanceView: View {
                                 loanTerm: loanTerm,
                                 loanTermUnit: loanTermUnit,
                                 loanPaymentType: loanPaymentType
-                            ))
+                            )
+                            savedLoans.insert(fav, at: 0)
+                            persistFavouriteLoans(savedLoans)
                             withAnimation(.spring(duration: 0.25)) { loanSaved = true }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                 withAnimation { loanSaved = false }
@@ -536,7 +538,7 @@ struct FinanceView: View {
                             let dp = downPaymentMode == "amount"
                                 ? downPaymentAmt
                                 : String(format: "%.0f", (Double(propPrice) ?? 0) * (Double(downPaymentPct) ?? 20) / 100)
-                            favStore.add(FavouriteLoan(
+                            let fav = FavouriteLoan(
                                 name: "\(mortgageRate)% · \(mortgageTerm) \(L.yr)",
                                 kind: "mortgage",
                                 propPrice: propPrice,
@@ -545,7 +547,9 @@ struct FinanceView: View {
                                 mortRate: mortgageRate,
                                 mortTerm: mortgageTerm,
                                 mortPaymentType: mortgagePaymentType
-                            ))
+                            )
+                            savedLoans.insert(fav, at: 0)
+                            persistFavouriteLoans(savedLoans)
                             withAnimation(.spring(duration: 0.25)) { mortSaved = true }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                 withAnimation { mortSaved = false }

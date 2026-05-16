@@ -23,37 +23,15 @@ struct FavouriteLoan: Codable, Identifiable {
     var mortPaymentType: String = "annuity"
 }
 
-@Observable
-class FavouriteLoanStore {
-    var items: [FavouriteLoan] = []
+private let favLoansKey = "tally_fav_loans_v1"
 
-    private let key = "tally_fav_loans_v1"
+func loadFavouriteLoans() -> [FavouriteLoan] {
+    guard let data = UserDefaults.standard.data(forKey: favLoansKey),
+          let decoded = try? JSONDecoder().decode([FavouriteLoan].self, from: data) else { return [] }
+    return decoded
+}
 
-    init() { load() }
-
-    func add(_ item: FavouriteLoan) {
-        items.insert(item, at: 0)
-        save()
-    }
-
-    func remove(at offsets: IndexSet) {
-        items.remove(atOffsets: offsets)
-        save()
-    }
-
-    func remove(_ item: FavouriteLoan) {
-        items.removeAll { $0.id == item.id }
-        save()
-    }
-
-    private func save() {
-        guard let data = try? JSONEncoder().encode(items) else { return }
-        UserDefaults.standard.set(data, forKey: key)
-    }
-
-    private func load() {
-        guard let data = UserDefaults.standard.data(forKey: key),
-              let decoded = try? JSONDecoder().decode([FavouriteLoan].self, from: data) else { return }
-        items = decoded
-    }
+func persistFavouriteLoans(_ items: [FavouriteLoan]) {
+    guard let data = try? JSONEncoder().encode(items) else { return }
+    UserDefaults.standard.set(data, forKey: favLoansKey)
 }

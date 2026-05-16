@@ -7,7 +7,7 @@ struct FavouritesView: View {
     @Environment(\.loc) private var L
     @Environment(\.dismiss) private var dismiss
 
-    let store: FavouriteLoanStore
+    @Binding var loans: [FavouriteLoan]
     let onLoad: (FavouriteLoan) -> Void
 
     @State private var openItem: FavouriteLoan? = nil
@@ -19,7 +19,7 @@ struct FavouritesView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if store.items.isEmpty {
+                if loans.isEmpty {
                     VStack(spacing: 14) {
                         Image(systemName: "bookmark.slash")
                             .font(.system(size: 44))
@@ -32,13 +32,16 @@ struct FavouritesView: View {
                     .background(T.bg)
                 } else {
                     List {
-                        ForEach(store.items) { item in
+                        ForEach(loans) { item in
                             Button { openItem = item } label: {
                                 favRow(item)
                             }
                             .listRowBackground(T.surface)
                         }
-                        .onDelete { store.remove(at: $0) }
+                        .onDelete { offsets in
+                            loans.remove(atOffsets: offsets)
+                            persistFavouriteLoans(loans)
+                        }
                     }
                     .listStyle(.insetGrouped)
                     .scrollContentBackground(.hidden)
