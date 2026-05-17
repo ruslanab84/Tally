@@ -12,7 +12,11 @@ struct SettingsView: View {
     @AppStorage("decimalPrecision") private var decimalPrecision = 4
     @AppStorage("defaultCurrency") private var defaultCurrency = "USD"
 
-    @Environment(\.requestReview) private var requestReview
+    private func requestReview() {
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            SKStoreReviewController.requestReview(in: scene)
+        }
+    }
 
     @AppStorage("hapticEnabled") private var hapticEnabled = true
     @State private var soundEnabled = false
@@ -421,7 +425,7 @@ enum NumberFormatOption: String, CaseIterable {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         SettingsView(isDarkMode: .constant(false), appLanguage: .constant("en"), accentColor: .constant("orange"))
     }
     .environment(\.tokens, .light)

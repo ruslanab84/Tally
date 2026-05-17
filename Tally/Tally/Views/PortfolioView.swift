@@ -274,7 +274,7 @@ struct AddHoldingSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(spacing: 14) {
                     // Coin selector
@@ -515,7 +515,7 @@ private struct PortfolioCoinPicker: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List(filtered) { crypto in
                 Button {
                     selected = crypto

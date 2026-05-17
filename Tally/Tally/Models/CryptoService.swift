@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 struct Crypto: Identifiable, Hashable {
     let id: String
@@ -122,12 +123,11 @@ struct CryptoPrice {
 }
 
 @MainActor
-@Observable
-class CryptoService {
-    var prices: [String: CryptoPrice] = [:]
-    var lastUpdated: Date?
-    var isLoading = false
-    var isOffline = false
+class CryptoService: ObservableObject {
+    @Published var prices: [String: CryptoPrice] = [:]
+    @Published var lastUpdated: Date?
+    @Published var isLoading = false
+    @Published var isOffline = false
 
     private let cacheKey = "tally_crypto_prices"
     private let cacheTimestampKey = "tally_crypto_timestamp"

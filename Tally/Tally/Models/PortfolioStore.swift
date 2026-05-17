@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import SwiftUI
 
 // MARK: - Model
@@ -22,9 +23,8 @@ struct PortfolioHolding: Identifiable, Codable {
 // MARK: - Store
 
 @MainActor
-@Observable
-class PortfolioStore {
-    var holdings: [PortfolioHolding] = []
+class PortfolioStore: ObservableObject {
+    @Published var holdings: [PortfolioHolding] = []
 
     private let key = "tally_portfolio_v1"
 

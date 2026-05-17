@@ -56,7 +56,6 @@ struct ContentView: View {
     @Binding var appLanguage: String
     @Binding var accentColor: String
     @State private var selectedTab: Tab = .home
-    @State private var navigationPath = NavigationPath()
 
     enum Tab {
         case home, history, settings
@@ -64,30 +63,30 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            NavigationStack(path: $navigationPath) {
-                HubView(navigationPath: $navigationPath)
-                    .navigationDestination(for: Screen.self) { screen in
-                        screenView(for: screen)
-                    }
+            NavigationView {
+                HubView()
             }
+            .navigationViewStyle(.stack)
             .tabItem {
                 Image(systemName: "house.fill")
                 Text(L.tabHome)
             }
             .tag(Tab.home)
 
-            NavigationStack {
+            NavigationView {
                 HistoryView()
             }
+            .navigationViewStyle(.stack)
             .tabItem {
                 Image(systemName: "clock.fill")
                 Text(L.tabHistory)
             }
             .tag(Tab.history)
 
-            NavigationStack {
+            NavigationView {
                 SettingsView(isDarkMode: $isDarkMode, appLanguage: $appLanguage, accentColor: $accentColor)
             }
+            .navigationViewStyle(.stack)
             .tabItem {
                 Image(systemName: "gearshape.fill")
                 Text(L.tabSettings)
@@ -95,26 +94,6 @@ struct ContentView: View {
             .tag(Tab.settings)
         }
         .tint(T.accent)
-    }
-
-    @ViewBuilder
-    private func screenView(for screen: Screen) -> some View {
-        switch screen {
-        case .simple:     SimpleCalcView()
-        case .scientific: SciCalcView()
-        case .currency:   CurrencyView()
-        case .units:      UnitsView()
-        case .temp:       TempView()
-        case .date:       DateTimeView()
-        case .sizes:      SizesView()
-        case .tip:        TipView()
-        case .finance:    FinanceView()
-        case .bmi:        BMIView()
-        case .engineering: EngineeringView()
-        case .crypto:      CryptoView()
-        case .inflation:   InflationView()
-        case .vat:         VATView()
-        }
     }
 }
 

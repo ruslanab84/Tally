@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import UserNotifications
 import SwiftUI
 
@@ -17,10 +18,9 @@ struct LoanReminder: Identifiable, Codable {
 // MARK: - Store + Notification Scheduling
 
 @MainActor
-@Observable
-class LoanReminderStore {
-    var reminders: [LoanReminder] = []
-    var authStatus: UNAuthorizationStatus = .notDetermined
+class LoanReminderStore: ObservableObject {
+    @Published var reminders: [LoanReminder] = []
+    @Published var authStatus: UNAuthorizationStatus = .notDetermined
 
     private let key = "tally_loan_reminders_v1"
 

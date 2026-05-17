@@ -1,10 +1,13 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct CSVFile: Transferable {
+struct CSVFile {
     let content: String
     let filename: String
+}
 
+@available(iOS 16, *)
+extension CSVFile: Transferable {
     static var transferRepresentation: some TransferRepresentation {
         DataRepresentation(exportedContentType: .commaSeparatedText) { file in
             Data(file.content.utf8)
@@ -67,7 +70,7 @@ struct FinanceView: View {
     @State private var rvbYears = 10
 
     @State private var showLoanReminders = false
-    @State private var loanReminderStore = LoanReminderStore()
+    @StateObject private var loanReminderStore = LoanReminderStore()
 
     // Favourites
     @State private var savedLoans: [FavouriteLoan] = loadFavouriteLoans()
@@ -1434,13 +1437,15 @@ struct FinanceView: View {
 
                 Spacer()
 
-                ShareLink(
-                    item: csvFile,
-                    preview: SharePreview("\(exportFilename).csv", image: Image(systemName: "tablecells"))
-                ) {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(T.accent)
+                if #available(iOS 16, *) {
+                    ShareLink(
+                        item: csvFile,
+                        preview: SharePreview("\(exportFilename).csv", image: Image(systemName: "tablecells"))
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(T.accent)
+                    }
                 }
 
                 Picker("", selection: $loanViewMode) {
@@ -1794,7 +1799,7 @@ struct FinanceView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         FinanceView()
     }
     .environment(\.tokens, .light)

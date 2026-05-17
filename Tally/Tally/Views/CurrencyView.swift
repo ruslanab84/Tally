@@ -8,7 +8,7 @@ struct CurrencyView: View {
     @State private var toCurrency = Currency.all[1]
     @State private var showFromPicker = false
     @State private var showToPicker = false
-    @State private var service = CurrencyService()
+    @StateObject private var service = CurrencyService()
     @FocusState private var amountFocused: Bool
 
     private var amount: Double { Double(amountText) ?? 0 }
@@ -361,7 +361,7 @@ private struct CurrencyPickerSheet: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         CurrencyView()
     }
     .environment(\.tokens, .light)

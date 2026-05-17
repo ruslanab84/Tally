@@ -29,7 +29,6 @@ struct HubTileData: Identifiable {
 struct HubView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
-    @Binding var navigationPath: NavigationPath
 
     private let columns = [
         GridItem(.flexible(), spacing: 10),
@@ -46,9 +45,12 @@ struct HubView: View {
 
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(HubTileData.all) { tile in
-                        HubTile(tile: tile) {
-                            navigationPath.append(tile.screen)
+                        NavigationLink {
+                            screenDestination(for: tile.screen)
+                        } label: {
+                            HubTile(tile: tile)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
 
@@ -82,54 +84,70 @@ struct HubView: View {
         ]) }
         .navigationTitle("Tally")
     }
+
+    @ViewBuilder
+    private func screenDestination(for screen: Screen) -> some View {
+        switch screen {
+        case .simple:      SimpleCalcView()
+        case .scientific:  SciCalcView()
+        case .currency:    CurrencyView()
+        case .units:       UnitsView()
+        case .temp:        TempView()
+        case .date:        DateTimeView()
+        case .sizes:       SizesView()
+        case .tip:         TipView()
+        case .finance:     FinanceView()
+        case .bmi:         BMIView()
+        case .engineering: EngineeringView()
+        case .crypto:      CryptoView()
+        case .inflation:   InflationView()
+        case .vat:         VATView()
+        }
+    }
 }
 
 struct HubTile: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
     let tile: HubTileData
-    let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            VStack(alignment: .leading) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(T[keyPath: tile.accentKey].opacity(0.12))
-                        .frame(width: 38, height: 38)
+        VStack(alignment: .leading) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(T[keyPath: tile.accentKey].opacity(0.12))
+                    .frame(width: 38, height: 38)
 
-                    Image(systemName: tile.icon)
-                        .font(.custom("JetBrainsMono-SemiBold", size: 16))
-                        .foregroundStyle(T[keyPath: tile.accentKey])
-                }
-
-                Spacer()
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(L[keyPath: tile.labelKey])
-                        .font(.custom("JetBrainsMono-SemiBold", size: 16))
-                        .foregroundStyle(T.text)
-                        .tracking(-0.2)
-
-                    Text(L[keyPath: tile.subKey])
-                        .font(.custom("JetBrainsMono-Regular", size: 12))
-                        .foregroundStyle(T.textMuted)
-                }
+                Image(systemName: tile.icon)
+                    .font(.custom("JetBrainsMono-SemiBold", size: 16))
+                    .foregroundStyle(T[keyPath: tile.accentKey])
             }
-            .padding(14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 124)
-            .background(T.surface)
-            .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
-            .shadow(color: .black.opacity(0.04), radius: 7, y: 2)
+
+            Spacer()
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(L[keyPath: tile.labelKey])
+                    .font(.custom("JetBrainsMono-SemiBold", size: 16))
+                    .foregroundStyle(T.text)
+                    .tracking(-0.2)
+
+                Text(L[keyPath: tile.subKey])
+                    .font(.custom("JetBrainsMono-Regular", size: 12))
+                    .foregroundStyle(T.textMuted)
+            }
         }
-        .buttonStyle(.plain)
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 124)
+        .background(T.surface)
+        .clipShape(RoundedRectangle(cornerRadius: TallyRadius.xl))
+        .shadow(color: .black.opacity(0.04), radius: 7, y: 2)
     }
 }
 
 #Preview {
-    NavigationStack {
-        HubView(navigationPath: .constant(NavigationPath()))
+    NavigationView {
+        HubView()
     }
     .environment(\.tokens, .light)
 }

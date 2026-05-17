@@ -1,13 +1,13 @@
 import Foundation
+import Combine
 
 @MainActor
-@Observable
-class CurrencyService {
-    var rates: [String: Double] = [:]
-    var previousRates: [String: Double] = [:]
-    var lastUpdated: Date?
-    var isLoading = false
-    var isOffline = false
+class CurrencyService: ObservableObject {
+    @Published var rates: [String: Double] = [:]
+    @Published var previousRates: [String: Double] = [:]
+    @Published var lastUpdated: Date?
+    @Published var isLoading = false
+    @Published var isOffline = false
 
     private let cacheRatesKey = "tally_cached_rates"
     private let cachePreviousRatesKey = "tally_cached_previous_rates"

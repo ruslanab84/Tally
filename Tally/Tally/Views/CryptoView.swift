@@ -3,8 +3,8 @@ import SwiftUI
 struct CryptoView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
-    @State private var service = CryptoService()
-    @State private var portfolioStore = PortfolioStore()
+    @StateObject private var service = CryptoService()
+    @StateObject private var portfolioStore = PortfolioStore()
     @State private var cryptoTab = 0       // 0 = Market, 1 = Portfolio
     @State private var amount = "1"
     @State private var selectedCrypto = Crypto.all[0]
@@ -262,7 +262,7 @@ struct CryptoView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         CryptoView()
     }
     .environment(\.tokens, .light)
