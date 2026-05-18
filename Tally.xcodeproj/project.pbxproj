@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		B71A247E2FB1036E00AD152D /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = B71A247C2FB1036200AD152D /* CLAUDE.md */; };
+		B7318CE22FBBA166003CCB0B /* LOCALIZATION_RULES.md in Resources */ = {isa = PBXBuildFile; fileRef = B7318CDE2FBBA166003CCB0B /* LOCALIZATION_RULES.md */; };
+		B7318CE32FBBA166003CCB0B /* software-design-and-architecture-analysis.md in Resources */ = {isa = PBXBuildFile; fileRef = B7318CE02FBBA166003CCB0B /* software-design-and-architecture-analysis.md */; };
+		B7318CE42FBBA166003CCB0B /* SWIFTUI_COMPONENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = B7318CE12FBBA166003CCB0B /* SWIFTUI_COMPONENTS.md */; };
+		B7318CE52FBBA166003CCB0B /* ARCHITECTURE.md in Resources */ = {isa = PBXBuildFile; fileRef = B7318CDD2FBBA166003CCB0B /* ARCHITECTURE.md */; };
+		B7318CE62FBBA166003CCB0B /* readme.md in Resources */ = {isa = PBXBuildFile; fileRef = B7318CDF2FBBA166003CCB0B /* readme.md */; };
 		B75699B32FB7A8830014C2F3 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B75699B22FB7A8830014C2F3 /* FirebaseAnalytics */; };
 		B75699B52FB7A8830014C2F3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = B75699B42FB7A8830014C2F3 /* FirebaseCrashlytics */; };
 		B75699B72FB7A8830014C2F3 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = B75699B62FB7A8830014C2F3 /* FirebaseRemoteConfig */; };
@@ -16,6 +21,11 @@
 /* Begin PBXFileReference section */
 		B71A24322FAD136B00AD152D /* Tally.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tally.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71A247C2FB1036200AD152D /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		B7318CDD2FBBA166003CCB0B /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
+		B7318CDE2FBBA166003CCB0B /* LOCALIZATION_RULES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LOCALIZATION_RULES.md; sourceTree = "<group>"; };
+		B7318CDF2FBBA166003CCB0B /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
+		B7318CE02FBBA166003CCB0B /* software-design-and-architecture-analysis.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "software-design-and-architecture-analysis.md"; sourceTree = "<group>"; };
+		B7318CE12FBBA166003CCB0B /* SWIFTUI_COMPONENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SWIFTUI_COMPONENTS.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -43,6 +53,11 @@
 		B71A24292FAD136B00AD152D = {
 			isa = PBXGroup;
 			children = (
+				B7318CDD2FBBA166003CCB0B /* ARCHITECTURE.md */,
+				B7318CDE2FBBA166003CCB0B /* LOCALIZATION_RULES.md */,
+				B7318CDF2FBBA166003CCB0B /* readme.md */,
+				B7318CE02FBBA166003CCB0B /* software-design-and-architecture-analysis.md */,
+				B7318CE12FBBA166003CCB0B /* SWIFTUI_COMPONENTS.md */,
 				B71A24342FAD136B00AD152D /* Tally */,
 				B71A24332FAD136B00AD152D /* Products */,
 				B71A247C2FB1036200AD152D /* CLAUDE.md */,
@@ -127,6 +142,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7318CE22FBBA166003CCB0B /* LOCALIZATION_RULES.md in Resources */,
+				B7318CE32FBBA166003CCB0B /* software-design-and-architecture-analysis.md in Resources */,
+				B7318CE42FBBA166003CCB0B /* SWIFTUI_COMPONENTS.md in Resources */,
+				B7318CE52FBBA166003CCB0B /* ARCHITECTURE.md in Resources */,
+				B7318CE62FBBA166003CCB0B /* readme.md in Resources */,
 				B71A247E2FB1036E00AD152D /* CLAUDE.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

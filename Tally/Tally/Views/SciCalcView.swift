@@ -83,6 +83,7 @@ enum GraphFunc: String, CaseIterable, Identifiable {
 struct SciCalcView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
+    @EnvironmentObject var historyStore: HistoryStore
     @State private var mode: SciMode = .sci
 
     enum SciMode: String, CaseIterable {
@@ -291,6 +292,7 @@ struct SciCalcView: View {
         sciFirst = result
         sciOp = nil
         sciNewInput = true
+        historyStore.add(expression: sciExpr, result: sciDisplay, type: .sci)
     }
 
     private func sciUnary(_ name: String, _ fn: (Double) -> Double) {
@@ -303,6 +305,9 @@ struct SciCalcView: View {
             sciDisplay = sciFormat(result)
         }
         sciNewInput = true
+        if sciDisplay != "Error" {
+            historyStore.add(expression: sciExpr, result: sciDisplay, type: .sci)
+        }
     }
 
     private func sciTrig(_ name: String) {
@@ -321,6 +326,9 @@ struct SciCalcView: View {
             sciDisplay = sciFormat(result)
         }
         sciNewInput = true
+        if sciDisplay != "Error" {
+            historyStore.add(expression: sciExpr, result: sciDisplay, type: .sci)
+        }
     }
 
     private func sciOpenParen() {
@@ -554,9 +562,11 @@ struct SciCalcView: View {
 
     private func progEvaluate() {
         guard let op = progOp else { return }
+        let second = progVal
         progVal = progCalc(progFirst, op, progVal)
         progOp = nil
         progNewInput = true
+        historyStore.add(expression: "\(progFirst) \(op) \(second)", result: "\(progVal)", type: .sci)
     }
 
     private func progCalc(_ a: Int64, _ op: String, _ b: Int64) -> Int64 {
@@ -734,8 +744,9 @@ struct SineGraphView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         SciCalcView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

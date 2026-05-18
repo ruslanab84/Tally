@@ -7,6 +7,7 @@ struct TipView: View {
     @State private var tipPercent = 18
     @State private var people = 2
     @FocusState private var billFocused: Bool
+    @EnvironmentObject var historyStore: HistoryStore
 
     private let tipOptions = [10, 15, 18, 20, 25]
 
@@ -197,12 +198,21 @@ struct TipView: View {
                 Button(L.done) { billFocused = false }
             }
         }
+        .onDisappear {
+            guard bill > 0 else { return }
+            historyStore.add(
+                expression: "$\(billText) · \(tipPercent)%",
+                result: String(format: "$%.2f/person", perPerson),
+                type: .tip
+            )
+        }
     }
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         TipView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

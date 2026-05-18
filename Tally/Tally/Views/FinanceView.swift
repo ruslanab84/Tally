@@ -73,8 +73,7 @@ struct FinanceView: View {
     @StateObject private var loanReminderStore = LoanReminderStore()
 
     // Favourites
-    @State private var savedLoans: [FavouriteLoan] = loadFavouriteLoans()
-    @State private var showFavs = false
+    @StateObject private var favStore = FavouriteLoanStore()
     @State private var loanSaved = false
     @State private var mortSaved = false
 
@@ -96,6 +95,7 @@ struct FinanceView: View {
                     Text(L.deposit).tag("deposit")
                     Text(L.mortgage).tag("mortgage")
                     Text(L.rentVsBuy).tag("rentbuy")
+                    Text(L.favFavourites).tag("favourites")
                 }
                 .pickerStyle(.segmented)
 
@@ -105,8 +105,10 @@ struct FinanceView: View {
                     depositSection
                 } else if mode == "mortgage" {
                     mortgageSection
-                } else {
+                } else if mode == "rentbuy" {
                     rentVsBuySection
+                } else {
+                    favouritesSection
                 }
             }
             .padding(.horizontal, 16)
@@ -125,20 +127,6 @@ struct FinanceView: View {
                 Spacer()
                 Button(L.done) { focused = nil }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button { showFavs = true } label: {
-                    Image(systemName: "bookmark")
-                        .font(.system(size: 16))
-                }
-            }
-        }
-        .sheet(isPresented: $showFavs) {
-            FavouritesView(loans: $savedLoans) { fav in
-                loadFavourite(fav)
-                showFavs = false
-            }
-            .environment(\.tokens, T)
-            .environment(\.loc, L)
         }
     }
 
@@ -254,8 +242,7 @@ struct FinanceView: View {
                                 loanTermUnit: loanTermUnit,
                                 loanPaymentType: loanPaymentType
                             )
-                            savedLoans.insert(fav, at: 0)
-                            persistFavouriteLoans(savedLoans)
+                            favStore.add(fav)
                             withAnimation(.spring(duration: 0.25)) { loanSaved = true }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                 withAnimation { loanSaved = false }
@@ -551,8 +538,7 @@ struct FinanceView: View {
                                 mortTerm: mortgageTerm,
                                 mortPaymentType: mortgagePaymentType
                             )
-                            savedLoans.insert(fav, at: 0)
-                            persistFavouriteLoans(savedLoans)
+                            favStore.add(fav)
                             withAnimation(.spring(duration: 0.25)) { mortSaved = true }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                 withAnimation { mortSaved = false }
@@ -1795,6 +1781,105 @@ struct FinanceView: View {
             mortgagePaymentType = fav.mortPaymentType
             mode = "mortgage"
         }
+    }
+
+    // MARK: - Favourites Section
+
+    private static let favDateFmt: DateFormatter = {
+        let f = DateFormatter(); f.dateStyle = .medium; return f
+    }()
+
+    private var favouritesSection: some View {
+        Group {
+            if favStore.items.isEmpty {
+                VStack(spacing: 14) {
+                    Image(systemName: "bookmark.slash")
+                        .font(.system(size: 44))
+                        .foregroundStyle(T.textMuted)
+                    Text(L.favEmpty)
+                        .font(.custom("JetBrainsMono-Regular", size: 15))
+                        .foregroundStyle(T.textMuted)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 60)
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(favStore.items) { item in
+                        favCard(item)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func favCard(_ item: FavouriteLoan) -> some View {
+        let subtitle = item.kind == "loan"
+            ? "$\(item.loanAmount) · \(item.loanRate)% · \(item.loanTerm) \(item.loanTermUnit)"
+            : "$\(item.propPrice) · \(item.mortRate)% · \(item.mortTerm) \(L.yr)"
+
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(item.kind == "loan" ? T.accentSoft : T.blue.opacity(0.12))
+                        .frame(width: 38, height: 38)
+                    Image(systemName: item.kind == "loan" ? "banknote" : "house.fill")
+                        .font(.system(size: 15))
+                        .foregroundStyle(item.kind == "loan" ? T.accent : T.blue)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.name)
+                        .font(.custom("JetBrainsMono-SemiBold", size: 14))
+                        .foregroundStyle(T.text)
+                    Text(subtitle)
+                        .font(.custom("JetBrainsMono-Regular", size: 11))
+                        .foregroundStyle(T.textMuted)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Button {
+                    favStore.removeById(item.id)
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.system(size: 14))
+                        .foregroundStyle(T.textMuted)
+                }
+                .buttonStyle(.plain)
+            }
+
+            HStack {
+                Text(Self.favDateFmt.string(from: item.savedAt))
+                    .font(.custom("JetBrainsMono-Regular", size: 10))
+                    .foregroundStyle(T.textTertiary)
+
+                Spacer()
+
+                Button {
+                    withAnimation { loadFavourite(item) }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .font(.system(size: 13))
+                        Text(L.favLoad)
+                            .font(.custom("JetBrainsMono-SemiBold", size: 13))
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(T.accent)
+                    .foregroundStyle(.white)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(14)
+        .background(T.surface)
+        .clipShape(RoundedRectangle(cornerRadius: TallyRadius.large))
     }
 }
 

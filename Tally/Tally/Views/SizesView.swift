@@ -290,7 +290,7 @@ struct SizeChart {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         SizesView()
     }
     .environment(\.tokens, .light)

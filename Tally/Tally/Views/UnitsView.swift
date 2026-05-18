@@ -8,6 +8,7 @@ struct UnitsView: View {
     @State private var toUnit: UnitItem
     @State private var inputText = "1000"
     @FocusState private var inputFocused: Bool
+    @EnvironmentObject var historyStore: HistoryStore
 
     init() {
         let cat = UnitCategory.all[0]
@@ -210,6 +211,14 @@ struct UnitsView: View {
                 Button(L.done) { inputFocused = false }
             }
         }
+        .onDisappear {
+            guard inputValue > 0 else { return }
+            historyStore.add(
+                expression: "\(inputText) \(fromUnit.symbol)",
+                result: "\(formatResult(result)) \(toUnit.symbol)",
+                type: .unit
+            )
+        }
     }
 
     // MARK: - Helpers
@@ -264,8 +273,9 @@ struct UnitsView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         UnitsView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

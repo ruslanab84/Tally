@@ -10,6 +10,7 @@ struct CurrencyView: View {
     @State private var showToPicker = false
     @StateObject private var service = CurrencyService()
     @FocusState private var amountFocused: Bool
+    @EnvironmentObject var historyStore: HistoryStore
 
     private var amount: Double { Double(amountText) ?? 0 }
     private var fromRate: Double { service.rateFor(fromCurrency.code) }
@@ -245,6 +246,14 @@ struct CurrencyView: View {
             }
         }
         .task { await service.fetchRates() }
+        .onDisappear {
+            guard amount > 0 else { return }
+            historyStore.add(
+                expression: "\(amountText) \(fromCurrency.code)",
+                result: String(format: "%.2f", result) + " \(toCurrency.code)",
+                type: .cur
+            )
+        }
         .sheet(isPresented: $showFromPicker) {
             CurrencyPickerSheet(selected: $fromCurrency, amount: amount, fromRate: fromRate, service: service)
                 .environment(\.tokens, T)
@@ -277,7 +286,7 @@ private struct CurrencyPickerSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(Array(filtered.enumerated()), id: \.element.id) { index, currency in
@@ -365,4 +374,5 @@ private struct CurrencyPickerSheet: View {
         CurrencyView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

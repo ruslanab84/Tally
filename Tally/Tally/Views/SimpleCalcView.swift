@@ -3,6 +3,7 @@ import SwiftUI
 struct SimpleCalcView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
+    @EnvironmentObject var historyStore: HistoryStore
     @State private var display = "0"
     @State private var expression = ""
     @State private var firstOperand: Double = 0
@@ -167,8 +168,10 @@ struct SimpleCalcView: View {
             return
         }
         let result = calculate(firstOperand, op, secondOperand)
-        expression = "\(formatNumber(firstOperand)) \(op) \(formatNumber(secondOperand)) ="
+        let expr = "\(formatNumber(firstOperand)) \(op) \(formatNumber(secondOperand))"
+        expression = expr + " ="
         display = formatNumber(result)
+        historyStore.add(expression: expr, result: formatNumber(result), type: .sci)
         firstOperand = result
         pendingOp = nil
         isNewInput = true
@@ -242,8 +245,9 @@ struct CalcKeyButton: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         SimpleCalcView()
     }
+    .environmentObject(HistoryStore())
     .environment(\.tokens, .light)
 }

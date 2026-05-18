@@ -8,6 +8,7 @@ struct EngineeringView: View {
     @State private var toUnit: EngUnit
     @State private var inputText = "1"
     @FocusState private var inputFocused: Bool
+    @EnvironmentObject var historyStore: HistoryStore
 
     init() {
         let cat = EngCategory.all[0]
@@ -269,7 +270,7 @@ struct EngineeringView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         EngineeringView()
     }
     .environment(\.tokens, .light)

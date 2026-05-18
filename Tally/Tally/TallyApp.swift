@@ -24,12 +24,14 @@ struct TallyApp: App {
         return base.withAccent(accentTheme, isDark: isDarkMode)
     }
 
+    @StateObject private var historyStore = HistoryStore()
     @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
             ZStack {
                 ContentView(isDarkMode: $isDarkMode, appLanguage: $appLanguage, accentColor: $accentColor)
+                    .environmentObject(historyStore)
                     .environment(\.tokens, tokens)
                     .environment(\.loc, Loc.forLanguage(lang))
                     .preferredColorScheme(isDarkMode ? .dark : .light)

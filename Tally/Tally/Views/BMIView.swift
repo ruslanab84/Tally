@@ -12,6 +12,7 @@ struct BMIView: View {
     @State private var heightIn = 9
     @State private var weightLbsText = "154"
     @FocusState private var focused: FocusField?
+    @EnvironmentObject var historyStore: HistoryStore
 
     enum FocusField: Hashable {
         case weight, height, weightLbs, age
@@ -172,6 +173,13 @@ struct BMIView: View {
                 Spacer()
                 Button(L.done) { focused = nil }
             }
+        }
+        .onDisappear {
+            guard bmi > 0 else { return }
+            let expr = system == "metric"
+                ? "\(weightText)kg, \(heightCmText)cm"
+                : "\(weightLbsText)lbs, \(heightFt)'\(heightIn)\""
+            historyStore.add(expression: expr, result: String(format: "BMI %.1f", bmi), type: .bmi)
         }
     }
 
@@ -597,8 +605,9 @@ private struct Triangle: Shape {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         BMIView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

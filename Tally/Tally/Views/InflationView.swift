@@ -4,6 +4,7 @@ struct InflationView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
     @FocusState private var amountFocused: Bool
+    @EnvironmentObject var historyStore: HistoryStore
 
     @State private var amountText = "1000"
     @State private var fromYear = 2000
@@ -63,6 +64,14 @@ struct InflationView: View {
                 Spacer()
                 Button(L.done) { amountFocused = false }
             }
+        }
+        .onDisappear {
+            guard let res = result else { return }
+            historyStore.add(
+                expression: "$\(amountText) (\(fromYear) → \(toYear))",
+                result: fmtCurrency(res),
+                type: .inflation
+            )
         }
         .sheet(isPresented: $showFromPicker) {
             yearSheet(
@@ -269,7 +278,7 @@ struct InflationView: View {
     // MARK: - Year Picker Sheet
 
     private func yearSheet(selection: Binding<Int>, title: String, years: [Int]) -> some View {
-        NavigationStack {
+        NavigationView {
             Picker("", selection: selection) {
                 ForEach(years, id: \.self) { y in
                     Text(String(y)).tag(y)
@@ -288,7 +297,6 @@ struct InflationView: View {
                 }
             }
         }
-        .presentationDetents([.height(280)])
     }
 
     // MARK: - Formatting
@@ -330,8 +338,9 @@ struct InflationView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         InflationView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

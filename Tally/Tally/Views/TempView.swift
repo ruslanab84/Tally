@@ -6,6 +6,7 @@ struct TempView: View {
     @State private var inputText = "22"
     @State private var selectedUnit = "°C"
     @FocusState private var inputFocused: Bool
+    @EnvironmentObject var historyStore: HistoryStore
 
     private var inputValue: Double { Double(inputText) ?? 0 }
 
@@ -194,6 +195,16 @@ struct TempView: View {
                 Button(L.done) { inputFocused = false }
             }
         }
+        .onDisappear {
+            guard Double(inputText) != nil else { return }
+            let resultStr: String
+            switch selectedUnit {
+            case "°C": resultStr = "\(formatTemp(fahrenheit))°F"
+            case "°F": resultStr = "\(formatTemp(celsius))°C"
+            default:   resultStr = "\(formatTemp(celsius))°C"
+            }
+            historyStore.add(expression: "\(inputText)\(selectedUnit)", result: resultStr, type: .temp)
+        }
     }
 
     // MARK: - Helpers
@@ -273,8 +284,9 @@ private struct TempResultRow: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         TempView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

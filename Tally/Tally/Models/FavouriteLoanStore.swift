@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Combine
 
 struct FavouriteLoan: Codable, Identifiable {
     var id = UUID()
@@ -23,15 +24,39 @@ struct FavouriteLoan: Codable, Identifiable {
     var mortPaymentType: String = "annuity"
 }
 
-private let favLoansKey = "tally_fav_loans_v1"
+@MainActor
+class FavouriteLoanStore: ObservableObject {
+    @Published var items: [FavouriteLoan] = []
 
-func loadFavouriteLoans() -> [FavouriteLoan] {
-    guard let data = UserDefaults.standard.data(forKey: favLoansKey),
-          let decoded = try? JSONDecoder().decode([FavouriteLoan].self, from: data) else { return [] }
-    return decoded
-}
+    private let key = "tally_fav_loans_v1"
 
-func persistFavouriteLoans(_ items: [FavouriteLoan]) {
-    guard let data = try? JSONEncoder().encode(items) else { return }
-    UserDefaults.standard.set(data, forKey: favLoansKey)
+    init() { load() }
+
+    func add(_ item: FavouriteLoan) {
+        items.insert(item, at: 0)
+        save()
+    }
+
+    func remove(at offsets: IndexSet) {
+        items.remove(atOffsets: offsets)
+        save()
+    }
+
+    func removeById(_ id: UUID) {
+        items.removeAll { $0.id == id }
+        save()
+    }
+
+    private func save() {
+        if let data = try? JSONEncoder().encode(items) {
+            UserDefaults.standard.set(data, forKey: key)
+        }
+    }
+
+    private func load() {
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let decoded = try? JSONDecoder().decode([FavouriteLoan].self, from: data)
+        else { return }
+        items = decoded
+    }
 }

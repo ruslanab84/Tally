@@ -5,8 +5,8 @@ import SwiftUI
 struct PortfolioView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
-    let store: PortfolioStore
-    let service: CryptoService
+    @ObservedObject var store: PortfolioStore
+    @ObservedObject var service: CryptoService
     @State private var showAdd = false
 
     var body: some View {
@@ -257,8 +257,8 @@ struct AddHoldingSheet: View {
     @Environment(\.loc) private var L
     @Environment(\.dismiss) private var dismiss
 
-    let store: PortfolioStore
-    let service: CryptoService
+    @ObservedObject var store: PortfolioStore
+    @ObservedObject var service: CryptoService
 
     @State private var selectedCrypto: Crypto = Crypto.all[0]
     @State private var amountText: String = ""

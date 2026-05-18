@@ -189,7 +189,7 @@ struct DateTimeView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         DateTimeView()
     }
     .environment(\.tokens, .light)

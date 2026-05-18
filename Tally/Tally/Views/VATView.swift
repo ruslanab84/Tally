@@ -4,6 +4,7 @@ struct VATView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
     @FocusState private var focused: FocusField?
+    @EnvironmentObject var historyStore: HistoryStore
 
     @State private var amountText = "1000"
     @State private var inputMode = "excl"   // "excl" or "incl"
@@ -40,6 +41,14 @@ struct VATView: View {
         .navigationTitle(L.navVAT)
         .navigationBarTitleDisplayMode(.large)
         .onTapGesture { focused = nil }
+        .onDisappear {
+            guard amount > 0 else { return }
+            historyStore.add(
+                expression: "\(amountText) + \(fmtRate(activeRate))% VAT",
+                result: fmtCurrency(inclVAT),
+                type: .vat
+            )
+        }
     }
 
     // MARK: - Amount Card
@@ -243,8 +252,9 @@ struct VATView: View {
 }
 
 #Preview {
-    NavigationStack {
+    NavigationView {
         VATView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }

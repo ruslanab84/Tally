@@ -29,6 +29,7 @@ struct HubTileData: Identifiable {
 struct HubView: View {
     @Environment(\.tokens) private var T
     @Environment(\.loc) private var L
+    @EnvironmentObject var historyStore: HistoryStore
 
     private let columns = [
         GridItem(.flexible(), spacing: 10),
@@ -61,13 +62,19 @@ struct HubView: View {
                         .tracking(0.6)
                         .foregroundStyle(T.textMuted)
 
-                    Text("127 × 4.5 = 571.5")
-                        .font(.custom("JetBrainsMono-Medium", size: 17))
-                        .foregroundStyle(T.text)
-
-                    Text("100 USD → 92.00 EUR")
-                        .font(.custom("JetBrainsMono-Medium", size: 14))
-                        .foregroundStyle(T.textMuted)
+                    let recent = historyStore.recent
+                    if recent.isEmpty {
+                        Text("No recent calculations")
+                            .font(.custom("JetBrainsMono-Regular", size: 14))
+                            .foregroundStyle(T.textMuted)
+                    } else {
+                        ForEach(Array(recent.enumerated()), id: \.element.id) { index, entry in
+                            Text("\(entry.expression) = \(entry.result)")
+                                .font(.custom("JetBrainsMono-Medium", size: index == 0 ? 17 : 14))
+                                .foregroundStyle(index == 0 ? T.text : T.textMuted)
+                                .lineLimit(1)
+                        }
+                    }
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -149,5 +156,6 @@ struct HubTile: View {
     NavigationView {
         HubView()
     }
+    .environmentObject(HistoryStore())
     .environment(\.tokens, .light)
 }
