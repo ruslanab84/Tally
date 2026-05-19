@@ -212,6 +212,14 @@ struct EngineeringView: View {
                 Button(L.done) { inputFocused = false }
             }
         }
+        .onDisappear {
+            guard inputValue > 0 else { return }
+            historyStore.add(
+                expression: "\(inputText) \(fromUnit.symbol)",
+                result: "\(formatResult(result)) \(toUnit.symbol)",
+                type: .engineering
+            )
+        }
     }
 
     // MARK: - Helpers
@@ -274,4 +282,5 @@ struct EngineeringView: View {
         EngineeringView()
     }
     .environment(\.tokens, .light)
+    .environmentObject(HistoryStore())
 }
